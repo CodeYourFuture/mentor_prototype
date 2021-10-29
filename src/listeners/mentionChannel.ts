@@ -4,17 +4,13 @@ import schema from '../schema';
 import { json2csvAsync } from 'json-2-csv';
 import { google } from 'googleapis';
 
-export default async function ({
-  say,
-  client,
-  channelID,
-  timestamp,
-  reporterID,
-}) {
+export default async function ({ say, client, channelID, reporterID }) {
   const { profile } = await client.users.profile.get({ user: reporterID });
+  const { channel: cohortInfo } = await client.conversations.info({
+    channel: channelID,
+  });
   say({
-    text: `I'll generate a report and send it to ${profile.email}. Keep an eye on your inbox.`,
-    thread_ts: timestamp,
+    text: `I'll generate a report for ${cohortInfo.name} and send it to ${profile.email}. Keep an eye on your inbox.`,
   });
   const { members: cohortList } = await client.conversations.members({
     channel: channelID,
@@ -34,12 +30,22 @@ export default async function ({
           variables: { studentID },
           fetchPolicy: 'network-only',
         });
-        const values = data.updates_aggregate?.nodes;
         return {
           Name: profile.real_name,
+          'Check-ins': data.quick_ALL.aggregate.count,
+          Overachieving: !data.quick_OVERACHIEVING.aggregate.count
+            ? '0%'
+            : `${
+                (data.quick_OVERACHIEVING.aggregate.count /
+                  data.quick_ALL.aggregate.count) *
+                100
+              }%`,
+          Concerns: data.quick_CONCERN.aggregate.count,
           ...[...schema]
             .map(({ key, label, defaultValue, integration }) => {
-              const dbVal = values?.find(({ key: k }) => k === key)?.value;
+              const dbVal = data.updates?.nodes?.find(
+                ({ key: k }) => k === key
+              )?.value;
               const value = integration
                 ? '🔗'
                 : dbVal || defaultValue || 'Unknown';
@@ -63,8 +69,9 @@ export default async function ({
   const JwtClient = new google.auth.JWT(EMAIL, null, KEY, scope);
   const drive = google.drive({ version: 'v3', auth: JwtClient });
   const mimeType = 'application/vnd.google-apps.spreadsheet';
+  const sheetName = `${cohortInfo.name} (${new Date().toISOString()})`;
   const newFile = await drive.files.create({
-    requestBody: { name: 'Chort', mimeType },
+    requestBody: { name: sheetName, mimeType },
     media: { mimeType: 'text/csv', body: csv },
     fields: 'id',
   });

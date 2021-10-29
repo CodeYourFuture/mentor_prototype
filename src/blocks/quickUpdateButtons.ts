@@ -2,10 +2,18 @@ export default ({ studentID, timestamp, studentName }: any) => {
   const actionValue = `${studentID}:${timestamp}`;
   return [
     {
+      type: 'section',
+      text: {
+        type: 'plain_text',
+        text: ' ',
+        emoji: true,
+      },
+    },
+    {
       type: 'header',
       text: {
         type: 'plain_text',
-        text: 'Quick Update',
+        text: 'Check-in',
         emoji: true,
       },
     },

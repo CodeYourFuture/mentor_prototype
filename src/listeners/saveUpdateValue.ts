@@ -1,6 +1,6 @@
 import addRecord from '../queries/addRecord.graphql';
 import database from '../clients/apollo';
-import { studentHome } from './talkToBot';
+import { studentHome } from './mentionStudent';
 
 export default function (slack) {
   slack.view(

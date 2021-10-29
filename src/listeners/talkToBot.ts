@@ -1,19 +1,5 @@
-import fieldsList from '../blocks/fieldsList';
-import quickUpdateButtons from '../blocks/quickUpdateButtons';
 import mentionChannel from './mentionChannel';
 import mentionStudent from './mentionStudent';
-
-type StudentHome = {
-  studentName: string;
-  studentID: string;
-  timestamp: Date;
-};
-
-export const studentHome = async (params: StudentHome) => {
-  const quickButtons = quickUpdateButtons(params);
-  const fieldButtons = await fieldsList(params);
-  return [...quickButtons, { type: 'divider' }, ...fieldButtons];
-};
 
 export default function (slack) {
   slack.message(async ({ message, say, client }: any) => {
@@ -34,13 +20,7 @@ export default function (slack) {
     // if message is a channel link to data
     if (message.text.startsWith('<#')) {
       const channelID = message.text.split('|')[0].split('<#')[1].split('>')[0];
-      return mentionChannel({
-        say,
-        client,
-        channelID,
-        timestamp,
-        reporterID,
-      });
+      return mentionChannel({ say, client, channelID, reporterID });
     }
     //
     // if the message doesn't start with an @student show the instructions
@@ -51,7 +31,10 @@ export default function (slack) {
     // if the message is a student, show the student
     studentID = studentID.replace('<@', '').replace('>', '');
     const isMentionedVolunteer = volunteerList.includes(studentID);
-    if (isMentionedVolunteer) return await say('This user is not a student');
+    if (isMentionedVolunteer) {
+      const { profile } = await client.users.profile.get({ user: studentID });
+      return await say(`${profile.real_name} is not a student`);
+    }
     mentionStudent({ say, client, studentID, timestamp });
   });
 }

@@ -1,14 +1,14 @@
 import schema from '../schema';
 
 export default ({ studentName, studentID, timestamp, data }: any) => {
-  const values = data.updates_aggregate?.nodes;
+  const values = data.updates?.nodes;
   const payload = { studentID, timestamp, studentName };
   return [
     {
       type: 'header',
       text: {
         type: 'plain_text',
-        text: 'Student Tracker',
+        text: 'Tracker',
         emoji: true,
       },
     },
@@ -17,7 +17,7 @@ export default ({ studentName, studentID, timestamp, data }: any) => {
       elements: [
         {
           type: 'mrkdwn',
-          text: `Please keep this information updated regularly.\n\n`,
+          text: `Please keep this information up to date.\n\n`,
         },
       ],
     },
