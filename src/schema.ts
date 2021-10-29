@@ -5,6 +5,7 @@ export default [
     area: 'PD',
     type: 'text',
     description: 'Percentage of classes attended',
+    defaultValue: '0%',
   },
   {
     key: 'codewars',
@@ -19,6 +20,5 @@ export default [
     area: 'Tech',
     description: 'Written and submitted a CV?',
     defaultValue: 'No',
-    desired: true,
   },
 ];

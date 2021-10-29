@@ -22,19 +22,14 @@ export default function (slack) {
     const { user: reporterID, ts: timestamp } = message;
     if (['message_changed', 'message_deleted'].includes(message.subtype))
       return;
-    const { user } = await client.users.info({ user: reporterID });
     //
     // if the user doesn't have permission, request permission
     const { members: volunteerList } = await client.conversations.members({
-      channel: process.env.PERMISSIONS_CHANNEL_ID,
+      channel: process.env.ACCESS_CHANNEL_ID,
     });
-    console.log(volunteerList);
-    const reporterRole = volunteerList.includes(reporterID)
-      ? 'volunteer'
-      : 'student';
-    if (reporterRole !== 'volunteer')
+    const isReporterVolunteer = volunteerList.includes(reporterID);
+    if (!isReporterVolunteer)
       return await say('You do not have permission to do this.');
-
     //
     // if message is a channel link to data
     if (message.text.startsWith('<#')) {
@@ -44,7 +39,7 @@ export default function (slack) {
         client,
         channelID,
         timestamp,
-        reporterID: message.channel,
+        reporterID,
       });
     }
     //
@@ -52,15 +47,11 @@ export default function (slack) {
     let [studentID] = message?.text?.split(/(\s+)/) || [];
     if (!studentID.startsWith('<@'))
       return say('@mention a student to record an update');
-
     //
     // if the message is a student, show the student
     studentID = studentID.replace('<@', '').replace('>', '');
-    const mentionedRole = volunteerList.includes(studentID)
-      ? 'volunteer'
-      : 'student';
-    if (mentionedRole === 'volunteer')
-      return await say('This user is not a student');
+    const isMentionedVolunteer = volunteerList.includes(studentID);
+    if (isMentionedVolunteer) return await say('This user is not a student');
     mentionStudent({ say, client, studentID, timestamp });
   });
 }

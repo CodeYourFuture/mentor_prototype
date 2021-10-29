@@ -1,4 +1,5 @@
 import addRecord from '../queries/addRecord.graphql';
+import database from '../clients/apollo';
 
 const REACTION_MAP = {
   OK: '+1',
@@ -23,7 +24,7 @@ export default function (slack) {
           timestamp: initialTimestamp,
           name: REACTION_MAP[status],
         });
-        client.mutate({
+        database.mutate({
           mutation: addRecord,
           variables: {
             team: body.team.id,
