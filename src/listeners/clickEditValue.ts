@@ -1,5 +1,5 @@
 import fieldModal from '../blocks/fieldModal';
-import schema from '../schema';
+import { getSchema } from '../clients/apollo';
 
 // When the user clicks a button to edit a value
 // open the modal to edit the value.
@@ -9,6 +9,7 @@ export default function (slack) {
     await ack();
     const { studentID, timestamp, key, studentName, currentValue, data } =
       JSON.parse(body.actions?.[0]?.value);
+    const schema = await getSchema();
     const schemaItem = schema.find((item) => item.key === key);
     const responseTimestamp = body.message.ts;
     const channelID = body.channel.id;

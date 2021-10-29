@@ -1,6 +1,5 @@
-import database from '../clients/apollo';
+import database, { getSchema } from '../clients/apollo';
 import getStudent from '../queries/getStudent.graphql';
-import schema from '../schema';
 import { json2csvAsync } from 'json-2-csv';
 import { google } from 'googleapis';
 
@@ -12,6 +11,7 @@ export default async function ({ say, client, channelID, reporterID }) {
   const { channel: cohortInfo } = await client.conversations.info({
     channel: channelID,
   });
+  const schema = await getSchema();
   say({
     text: `I'll generate a report for ${cohortInfo.name} and send it to ${profile.email}. Keep an eye on your inbox.`,
   });
@@ -45,13 +45,13 @@ export default async function ({ say, client, channelID, reporterID }) {
               }%`,
           Concerns: data.quick_CONCERN.aggregate.count,
           ...[...schema]
-            .map(({ key, label, defaultValue, integration }) => {
+            .map(({ key, label, default_value, integration }) => {
               const dbVal = data.updates?.nodes?.find(
                 ({ key: k }) => k === key
               )?.value;
               const value = integration
                 ? '🔗'
-                : dbVal || defaultValue || 'Unknown';
+                : dbVal || default_value || 'Unknown';
               return { column: label, value };
             })
             .reduce(

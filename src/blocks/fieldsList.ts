@@ -1,6 +1,4 @@
-import schema from '../schema';
-
-export default ({ studentName, studentID, timestamp, data }: any) => {
+export default ({ studentName, studentID, timestamp, data, schema }: any) => {
   const values = data.updates?.nodes;
   const payload = { studentID, timestamp, studentName };
   return [
@@ -23,9 +21,9 @@ export default ({ studentName, studentID, timestamp, data }: any) => {
     },
     ...schema
       .filter(({ integration }) => !integration)
-      .map(({ key, label, defaultValue }) => {
+      .map(({ key, label, default_value }) => {
         const dbVal = values?.find(({ key: k }) => k === key)?.value;
-        const currentValue = dbVal || defaultValue;
+        const currentValue = dbVal || default_value;
         const actionValue = JSON.stringify({ ...payload, key, currentValue });
         return {
           type: 'section',
