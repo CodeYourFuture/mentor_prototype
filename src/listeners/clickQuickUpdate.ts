@@ -1,6 +1,9 @@
 import addRecord from '../queries/addRecord.graphql';
 import database from '../clients/apollo';
 
+// When the user taps one of the quick update buttons
+// save in the database and respond with an emoji reaction
+
 const REACTION_MAP = {
   OK: '+1',
   OVERACHIEVING: 'sparkles',

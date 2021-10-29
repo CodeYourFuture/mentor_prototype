@@ -3,6 +3,9 @@ import quickUpdateButtons from '../blocks/quickUpdateButtons';
 import database from '../clients/apollo';
 import getStudent from '../queries/getStudent.graphql';
 
+// When the user @mention's a student
+// Show them the student home form
+
 type StudentHome = {
   studentName: string;
   studentID: string;

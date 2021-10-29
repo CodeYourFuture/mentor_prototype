@@ -2,6 +2,9 @@ import addRecord from '../queries/addRecord.graphql';
 import database from '../clients/apollo';
 import { studentHome } from './mentionStudent';
 
+// When the user sumbits the 'edit field' modal
+// save it to the database and refresh the student home form
+
 export default function (slack) {
   slack.view(
     'SAVE_UPDATE_VALUE',

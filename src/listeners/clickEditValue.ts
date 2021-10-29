@@ -1,6 +1,9 @@
 import fieldModal from '../blocks/fieldModal';
 import schema from '../schema';
 
+// When the user clicks a button to edit a value
+// open the modal to edit the value.
+
 export default function (slack) {
   slack.action('CLICK_UPDATE_VALUE', async ({ ack, body, client }: any) => {
     await ack();

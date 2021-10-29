@@ -1,21 +1,27 @@
 import mentionChannel from './mentionChannel';
 import mentionStudent from './mentionStudent';
 
+// When the user sends a DM to CYFBot.
+
 export default function (slack) {
   slack.message(async ({ message, say, client }: any) => {
     //
-    // if the user doesn't have permission, request permission
+    // Ignore edits and deletes
     const { user: reporterID, ts: timestamp } = message;
     if (['message_changed', 'message_deleted'].includes(message.subtype))
       return;
     //
-    // if the user doesn't have permission, request permission
+    // Ensure the user has permission
     const { members: volunteerList } = await client.conversations.members({
       channel: process.env.ACCESS_CHANNEL_ID,
     });
     const isReporterVolunteer = volunteerList.includes(reporterID);
-    if (!isReporterVolunteer)
-      return await say('You do not have permission to do this.');
+    if (!isReporterVolunteer) {
+      const accessChannelName = '';
+      return await say(
+        `To use CYFbot you must be part of the ${accessChannelName} channel`
+      );
+    }
     //
     // if message is a channel link to data
     if (message.text.startsWith('<#')) {

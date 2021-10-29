@@ -4,6 +4,9 @@ import schema from '../schema';
 import { json2csvAsync } from 'json-2-csv';
 import { google } from 'googleapis';
 
+// When the user #mention's a channel
+// Generate a Google Sheet and email it to them
+
 export default async function ({ say, client, channelID, reporterID }) {
   const { profile } = await client.users.profile.get({ user: reporterID });
   const { channel: cohortInfo } = await client.conversations.info({
