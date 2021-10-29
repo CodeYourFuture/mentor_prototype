@@ -1,6 +1,6 @@
-export default ({ student, timestamp, studentName }: any) => {
-  const actionValue = `${student}:${timestamp}`;
-  const blocks = [
+export default ({ studentID, timestamp, studentName }: any) => {
+  const actionValue = `${studentID}:${timestamp}`;
+  return [
     {
       type: 'header',
       text: {
@@ -63,5 +63,4 @@ export default ({ student, timestamp, studentName }: any) => {
       },
     },
   ];
-  return blocks;
 };
