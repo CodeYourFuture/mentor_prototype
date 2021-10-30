@@ -6,11 +6,28 @@ import { google } from 'googleapis';
 // When the user #mention's a channel
 // Generate a Google Sheet and email it to them
 
+const getAllMessages = async ({ client, channelID }) => {
+  let allMessages = [];
+  const fetchSlice = async ({ next_cursor }) => {
+    const response = await client.conversations.history({
+      channel: channelID,
+      ...(next_cursor ? { cursor: next_cursor } : { limit: 100 }),
+    });
+    allMessages = [...allMessages, ...response.messages];
+    if (response.response_metadata.next_cursor) {
+      await fetchSlice({ next_cursor: response.response_metadata.next_cursor });
+    }
+  };
+  await fetchSlice({ next_cursor: false });
+  return allMessages;
+};
+
 export default async function ({ say, client, channelID, reporterID }) {
   const { profile } = await client.users.profile.get({ user: reporterID });
   const { channel: cohortInfo } = await client.conversations.info({
     channel: channelID,
   });
+  // TODO: check if bot is in channel, reply if not
   const schema = await getSchema();
   say({
     text: `I'll generate a report for #${cohortInfo.name} and send it to ${profile.email}. Keep an eye on your inbox.`,
@@ -21,6 +38,9 @@ export default async function ({ say, client, channelID, reporterID }) {
   const { members: volunteerList } = await client.conversations.members({
     channel: process.env.ACCESS_CHANNEL_ID,
   });
+  //
+  // Fetch total number of messages sent in the channel
+  const allMessages = await getAllMessages({ client, channelID });
   //
   // Fetch data for all members of channel (filter out volunteers)
   const cohort = (await Promise.all(
@@ -59,6 +79,8 @@ export default async function ({ say, client, channelID, reporterID }) {
                 100
               }%`,
           Concerns: data.quick_CONCERN.aggregate.count,
+          'Slack Messages': allMessages.filter((m) => m.user === studentID)
+            .length,
         };
       })
   )) as any;
