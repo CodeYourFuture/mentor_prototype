@@ -27,11 +27,13 @@ export default async function ({ say, client, channelID, reporterID }) {
   const { channel: cohortInfo } = await client.conversations.info({
     channel: channelID,
   });
-  // TODO: check if bot is in channel, reply if not
-  const schema = await getSchema();
+  // Check bot has access to channel
+  await client.conversations.history({ channel: channelID, limit: 1 });
   say({
     text: `I'll generate a report for #${cohortInfo.name} and send it to ${profile.email}. Keep an eye on your inbox.`,
   });
+
+  const schema = await getSchema();
   const { members: cohortList } = await client.conversations.members({
     channel: channelID,
   });
