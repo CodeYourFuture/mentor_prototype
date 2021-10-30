@@ -29,13 +29,42 @@ export default ({
         type: 'input',
         block_id: 'view',
         element: {
-          type: 'plain_text_input',
-          action_id: 'input',
-          ...(currentValue ? { initial_value: currentValue } : {}),
-          placeholder: {
-            type: 'plain_text',
-            text: schemaItem.description || 'Not set',
-          },
+          ...(schemaItem.type === 'text'
+            ? {
+                type: 'plain_text_input',
+                action_id: 'input',
+                ...(currentValue ? { initial_value: currentValue } : {}),
+                placeholder: {
+                  type: 'plain_text',
+                  text: schemaItem.description || 'Not set',
+                },
+              }
+            : {
+                type: 'static_select',
+                action_id: `value`,
+                ...(currentValue
+                  ? {
+                      initial_option: {
+                        text: { type: 'plain_text', text: currentValue },
+                        value: currentValue,
+                      },
+                    }
+                  : {}),
+                placeholder: {
+                  type: 'plain_text',
+                  text: currentValue || 'No',
+                },
+                options: [
+                  {
+                    text: { type: 'plain_text', text: 'Yes' },
+                    value: 'Yes',
+                  },
+                  {
+                    text: { type: 'plain_text', text: 'No' },
+                    value: 'No',
+                  },
+                ],
+              }),
         },
         label: {
           type: 'plain_text',

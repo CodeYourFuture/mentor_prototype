@@ -9,7 +9,10 @@ export default function (slack) {
   slack.view(
     'SAVE_UPDATE_VALUE',
     async ({ ack, body, view, say, client }: any) => {
-      const value = body.view.state.values.view.input.value;
+      console.log(body.view.state.values);
+      const value =
+        body.view.state.values.view.input?.value ||
+        body.view.state.values.view.value.selected_option?.value;
       const metadata = JSON.parse(body.view.private_metadata || {});
       const { schemaItem, studentID, studentName, timestamp, channelID } =
         metadata;

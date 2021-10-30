@@ -28,5 +28,19 @@ export default ({ schema, timestamp }) => {
         },
       };
     }),
+    {
+      type: 'actions',
+      elements: [
+        {
+          type: 'button',
+          action_id: 'ADD_SCHEMA_FIELD',
+          text: {
+            type: 'plain_text',
+            text: '➕ Add Question',
+            emoji: true,
+          },
+        },
+      ],
+    },
   ];
 };

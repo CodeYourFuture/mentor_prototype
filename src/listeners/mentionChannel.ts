@@ -13,7 +13,7 @@ export default async function ({ say, client, channelID, reporterID }) {
   });
   const schema = await getSchema();
   say({
-    text: `I'll generate a report for ${cohortInfo.name} and send it to ${profile.email}. Keep an eye on your inbox.`,
+    text: `I'll generate a report for #${cohortInfo.name} and send it to ${profile.email}. Keep an eye on your inbox.`,
   });
   const { members: cohortList } = await client.conversations.members({
     channel: channelID,
@@ -34,16 +34,8 @@ export default async function ({ say, client, channelID, reporterID }) {
           fetchPolicy: 'network-only',
         });
         return {
+          StudentID: studentID,
           Name: profile.real_name,
-          'Check-ins': data.quick_ALL.aggregate.count,
-          Overachieving: !data.quick_OVERACHIEVING.aggregate.count
-            ? '0%'
-            : `${
-                (data.quick_OVERACHIEVING.aggregate.count /
-                  data.quick_ALL.aggregate.count) *
-                100
-              }%`,
-          Concerns: data.quick_CONCERN.aggregate.count,
           ...[...schema]
             .map(({ key, label, default_value, integration }) => {
               const dbVal = data.updates?.nodes?.find(
@@ -58,6 +50,15 @@ export default async function ({ say, client, channelID, reporterID }) {
               (acc, { column, value }) => ({ ...acc, [column]: value }),
               {}
             ),
+          'Check-ins': data.quick_ALL.aggregate.count,
+          Overachieving: !data.quick_OVERACHIEVING.aggregate.count
+            ? '0%'
+            : `${
+                (data.quick_OVERACHIEVING.aggregate.count /
+                  data.quick_ALL.aggregate.count) *
+                100
+              }%`,
+          Concerns: data.quick_CONCERN.aggregate.count,
         };
       })
   )) as any;
