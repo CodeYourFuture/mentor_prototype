@@ -113,7 +113,6 @@ export default ({ schemaKey, schemaItem, timestamp, channelID, mode }: any) => {
         ]
       : []),
   ];
-  console.log({ blocks: blocks.map((b) => (b as any).elements) });
   return {
     title: {
       type: 'plain_text',

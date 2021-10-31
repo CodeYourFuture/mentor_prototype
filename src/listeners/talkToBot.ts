@@ -62,9 +62,8 @@ export default function (slack) {
           `I am not in that Slack channel. To add me, just post a message in the channel mentioning @CYFBot`
         );
       }
-      say(`Error: ${error.data.error}`);
-      // console.log('hi');
-      // console.error(error.data.error);
+      say(`Error: ${error?.data?.error || error?.message || 'Unknown'}`);
+      console.error(error);
     }
   });
 }

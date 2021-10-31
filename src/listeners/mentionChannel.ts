@@ -1,5 +1,6 @@
 import database, { getSchema } from '../clients/apollo';
 import getStudent from '../queries/getStudent.graphql';
+import getCheckInReporters from '../queries/getCheckInReporters.graphql';
 import { json2csvAsync } from 'json-2-csv';
 import { google } from 'googleapis';
 
@@ -55,8 +56,30 @@ export default async function ({ say, client, channelID, reporterID }) {
           variables: { studentID },
           fetchPolicy: 'network-only',
         });
+
+        // Collate reporters
+        const { data: reporterData } = await database.query({
+          query: getCheckInReporters,
+          variables: { studentID },
+          fetchPolicy: 'network-only',
+        });
+        const reporterCounts = reporterData.updates.nodes.reduce(
+          (acc, { reporter }) => ({
+            ...acc,
+            [reporter]: (acc[reporter] || 0) + 1,
+          }),
+          {}
+        );
+        const reporters = [];
+        for (const [user] of Object.entries(reporterCounts).sort((a, b) =>
+          b[1] > a[1] ? 1 : -1
+        )) {
+          const { profile } = await client.users.profile.get({ user });
+          const reporterName = profile.real_name;
+          reporters.push(`${reporterName}`);
+        }
         return {
-          StudentID: studentID,
+          'Student ID': studentID,
           Name: profile.real_name,
           ...[...schema]
             .map(({ key, label, default_value, integration }) => {
@@ -72,6 +95,8 @@ export default async function ({ say, client, channelID, reporterID }) {
               (acc, { column, value }) => ({ ...acc, [column]: value }),
               {}
             ),
+          'Slack Messages': allMessages.filter((m) => m.user === studentID)
+            .length,
           'Check-ins': data.quick_ALL.aggregate.count,
           Overachieving: !data.quick_OVERACHIEVING.aggregate.count
             ? '0%'
@@ -81,8 +106,7 @@ export default async function ({ say, client, channelID, reporterID }) {
                 100
               }%`,
           Concerns: data.quick_CONCERN.aggregate.count,
-          'Slack Messages': allMessages.filter((m) => m.user === studentID)
-            .length,
+          'Check-ins with': reporters.join(', '),
         };
       })
   )) as any;
