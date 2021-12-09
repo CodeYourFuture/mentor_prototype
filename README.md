@@ -16,6 +16,8 @@ Send a DM To CYFBot with the #cohort_channel_name.
 
 ## Dev Quickstart
 
+Message Dom Vinyard on CYF Slack and I can help you get set up with env variables etc.
+
 1. Clone the repository:
 
 ```bash
