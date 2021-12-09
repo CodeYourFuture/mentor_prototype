@@ -45,7 +45,7 @@ export default function (slack) {
       let [studentID] = message?.text?.split(/(\s+)/) || [];
       if (!studentID.startsWith('<@'))
         return say(
-          '@mention a student to record an update, #mention a channel to view all students or type "help" for more options'
+          '@mention a trainee to record an update, #mention a channel to view all trainees or type "help" for more options'
         );
       //
       // if the message is a student, show the student
@@ -53,7 +53,7 @@ export default function (slack) {
       const isMentionedVolunteer = volunteerList.includes(studentID);
       if (isMentionedVolunteer) {
         const { profile } = await client.users.profile.get({ user: studentID });
-        return await say(`${profile.real_name} is not a student`);
+        return await say(`${profile.real_name} is not a trainee`);
       }
       await mentionStudent({ say, client, studentID, timestamp });
     } catch (error) {

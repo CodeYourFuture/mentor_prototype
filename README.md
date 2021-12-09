@@ -1,14 +1,14 @@
 # CYFBot
 
-A Slackbot for tracking student data.
+A Slackbot for tracking trainee data.
 
 ## How to use CYFBot
 
-CYF bot allows mentors to update student information and review cohort progress.
+CYF bot allows mentors to update trainee information and review cohort progress.
 
-#### Update Student Information
+#### Update Trainee Information
 
-Send a DM To CYFBot with the @student_name.
+Send a DM To CYFBot with the @trainee_name.
 
 #### Review cohort progress
 
