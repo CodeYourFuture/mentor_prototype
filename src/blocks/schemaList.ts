@@ -10,7 +10,7 @@ export default ({ schema, timestamp }) => {
         type: 'button',
         text: {
           type: 'plain_text',
-          text: '🔎 Database',
+          text: '🔎 View all data',
           emoji: true,
         },
         url: 'https://cloud.hasura.io/project/6a8e17b2-2ea7-446b-bba0-0d7e32b372ae/console',
