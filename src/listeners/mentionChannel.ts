@@ -1,8 +1,8 @@
-import database, { getSchema } from '../clients/apollo';
-import getStudent from '../queries/getStudent.graphql';
-import getCheckInReporters from '../queries/getCheckInReporters.graphql';
-import { json2csvAsync } from 'json-2-csv';
-import { google } from 'googleapis';
+import database, { getSchema } from "../clients/apollo";
+import getStudent from "../queries/getStudent.graphql";
+import getCheckInReporters from "../queries/getCheckInReporters.graphql";
+import { json2csvAsync } from "json-2-csv";
+import { google } from "googleapis";
 
 // When the user #mention's a channel
 // Generate a Google Sheet and email it to them
@@ -28,10 +28,19 @@ export default async function ({ say, client, channelID, reporterID }) {
   const { channel: cohortInfo } = await client.conversations.info({
     channel: channelID,
   });
+  const PUBLIC_EMAIL_FIELD_ID = "Xf01G06F0KJ6";
+  const email = profile?.fields?.[PUBLIC_EMAIL_FIELD_ID]?.value;
+
+  if (!email) {
+    return say({
+      text: `Cannot generate a report because you have no email address set. Please check your profile.`,
+    });
+  }
+
   // Check bot has access to channel
   await client.conversations.history({ channel: channelID, limit: 1 });
   say({
-    text: `I'll generate a report for #${cohortInfo.name} and send it to ${profile.email}. Keep an eye on your inbox.`,
+    text: `I'll generate a report for #${cohortInfo.name} and send it to ${email}. Keep an eye on your inbox.`,
   });
 
   const schema = await getSchema();
@@ -54,14 +63,14 @@ export default async function ({ say, client, channelID, reporterID }) {
         const { data } = await database.query({
           query: getStudent,
           variables: { studentID },
-          fetchPolicy: 'network-only',
+          fetchPolicy: "network-only",
         });
 
         // Collate reporters
         const { data: reporterData } = await database.query({
           query: getCheckInReporters,
           variables: { studentID },
-          fetchPolicy: 'network-only',
+          fetchPolicy: "network-only",
         });
         const reporterCounts = reporterData.updates.nodes.reduce(
           (acc, { reporter }) => ({
@@ -79,7 +88,7 @@ export default async function ({ say, client, channelID, reporterID }) {
           reporters.push(`${reporterName}`);
         }
         return {
-          'Student ID': studentID,
+          "Student ID": studentID,
           Name: profile.real_name,
           ...[...schema]
             .map(({ key, label, default_value, integration }) => {
@@ -87,26 +96,26 @@ export default async function ({ say, client, channelID, reporterID }) {
                 ({ key: k }) => k === key
               )?.value;
               const value = integration
-                ? '🔗'
-                : dbVal || default_value || 'Unknown';
+                ? "🔗"
+                : dbVal || default_value || "Unknown";
               return { column: label, value };
             })
             .reduce(
               (acc, { column, value }) => ({ ...acc, [column]: value }),
               {}
             ),
-          'Slack Messages': allMessages.filter((m) => m.user === studentID)
+          "Slack Messages": allMessages.filter((m) => m.user === studentID)
             .length,
-          'Check-ins': data.quick_ALL.aggregate.count,
+          "Check-ins": data.quick_ALL.aggregate.count,
           Overachieving: !data.quick_OVERACHIEVING.aggregate.count
-            ? '0%'
+            ? "0%"
             : `${
                 (data.quick_OVERACHIEVING.aggregate.count /
                   data.quick_ALL.aggregate.count) *
                 100
               }%`,
           Concerns: data.quick_CONCERN.aggregate.count,
-          'Check-ins with': reporters.join(', '),
+          "Check-ins with": reporters.join(", "),
         };
       })
   )) as any;
@@ -117,19 +126,19 @@ export default async function ({ say, client, channelID, reporterID }) {
   //
   // Send to google sheets
   const { SHEETS_CLIENT_EMAIL: EMAIL, SHEETS_PRIVATE_KEY: KEY } = process.env;
-  const scope = ['https://www.googleapis.com/auth/drive'];
+  const scope = ["https://www.googleapis.com/auth/drive"];
   const JwtClient = new google.auth.JWT(EMAIL, null, KEY, scope);
-  const drive = google.drive({ version: 'v3', auth: JwtClient });
-  const mimeType = 'application/vnd.google-apps.spreadsheet';
+  const drive = google.drive({ version: "v3", auth: JwtClient });
+  const mimeType = "application/vnd.google-apps.spreadsheet";
   const sheetName = `${cohortInfo.name} (${new Date().toISOString()})`;
   const newFile = await drive.files.create({
     requestBody: { name: sheetName, mimeType },
-    media: { mimeType: 'text/csv', body: csv },
-    fields: 'id',
+    media: { mimeType: "text/csv", body: csv },
+    fields: "id",
   });
   await drive.permissions.create({
-    requestBody: { role: 'reader', type: 'user', emailAddress: profile.email },
+    requestBody: { role: "reader", type: "user", emailAddress: email },
     fileId: newFile.data.id,
-    fields: 'id',
+    fields: "id",
   });
 }
