@@ -1,6 +1,6 @@
-import database, { getSchema } from '../clients/apollo';
-import updateSchema from '../queries/updateSchema.graphql';
-import schemaList from '../blocks/schemaList';
+import database, { getSchema } from "../clients/apollo";
+import updateSchema from "../queries/updateSchema.graphql";
+import schemaList from "../blocks/schemaList";
 
 // When the user updates a schema field
 // save it to the schema table
@@ -16,22 +16,27 @@ export const refreshSchemaList = async ({ client, channelID, timestamp }) => {
 };
 
 export const getValuesFromForm = async ({ body, schemaKey }) => {
-  const updatedValues = Object.entries(body.view.state.values).reduce(
-    (acc, [column, value]) => ({
-      ...acc,
-      [column]:
-        (value as any).value.value ||
-        (value as any).value.selected_option.value,
-    }),
-    { key: schemaKey }
-  ) as any;
-  updatedValues.integration = updatedValues.integration === 'Yes';
-  return updatedValues;
+  try {
+    const updatedValues = Object.entries(body.view.state.values).reduce(
+      (acc, [column, value]) => ({
+        ...acc,
+        [column]:
+          (value as any)?.value?.value ||
+          (value as any)?.value?.selected_option?.value ||
+          "",
+      }),
+      { key: schemaKey }
+    ) as any;
+    updatedValues.integration = updatedValues.integration === "Yes";
+    return updatedValues;
+  } catch (e) {
+    return {};
+  }
 };
 
 export default function (slack) {
   slack.view(
-    'SAVE_SCHEMA_EDIT',
+    "SAVE_SCHEMA_EDIT",
     async ({ ack, body, view, say, client }: any) => {
       const metadata = JSON.parse(body.view.private_metadata || {});
       const { timestamp, channelID, schemaKey } = metadata;
