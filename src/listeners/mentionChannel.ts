@@ -76,7 +76,7 @@ export default async function ({ say, client, channelID, reporterID }) {
 
   //
   // Fetch data for all members of channel (filter out volunteers)
-  const throttle = 1000;
+  const throttle = 2000;
   const cohort = (await Promise.all(
     cohortList
       .filter((studentID) => !volunteerList.includes(studentID))
