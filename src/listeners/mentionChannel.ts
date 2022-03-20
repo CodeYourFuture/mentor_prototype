@@ -81,65 +81,72 @@ export default async function ({ say, client, channelID, reporterID }) {
     cohortList
       .filter((studentID) => !volunteerList.includes(studentID))
       .map(async (studentID, i) => {
-        await sleep(throttle * i);
-        const { profile } = await client.users.profile.get({ user: studentID });
+        try {
+          await sleep(throttle * i);
+          const { profile } = await client.users.profile.get({
+            user: studentID,
+          });
 
-        console.log("Processing", profile.real_name);
-        const { data } = await database.query({
-          query: getStudent,
-          variables: { studentID },
-          fetchPolicy: "network-only",
-        });
+          console.log("Processing", profile.real_name);
+          const { data } = await database.query({
+            query: getStudent,
+            variables: { studentID },
+            fetchPolicy: "network-only",
+          });
 
-        const reporterCounts = data.reporters.nodes.reduce(
-          (acc, { reporter }) => ({
-            ...acc,
-            [reporter]: (acc[reporter] || 0) + 1,
-          }),
-          {}
-        );
-        const reporters = [];
-        for (const [user] of Object.entries(reporterCounts).sort((a, b) =>
-          b[1] > a[1] ? 1 : -1
-        )) {
-          const { profile } = await client.users.profile.get({ user });
-          const reporterName = profile.real_name;
-          reporters.push(`${reporterName}`);
+          const reporterCounts = data.reporters.nodes.reduce(
+            (acc, { reporter }) => ({
+              ...acc,
+              [reporter]: (acc[reporter] || 0) + 1,
+            }),
+            {}
+          );
+          const reporters = [];
+          for (const [user] of Object.entries(reporterCounts).sort((a, b) =>
+            b[1] > a[1] ? 1 : -1
+          )) {
+            const { profile } = await client.users.profile.get({ user });
+            const reporterName = profile.real_name;
+            reporters.push(`${reporterName}`);
+          }
+          const concern_areas =
+            data.concern_areas.nodes
+              .filter(({ timestamp }) => getNumberOfDays(timestamp) < 30)
+              .map(({ value }) => `${value}`.toLowerCase())
+              .join(", ") || "";
+          return {
+            "Student ID": studentID,
+            Name: profile.real_name,
+            Mentors: reporters.join(", "),
+            "Check-ins": data.quick_ALL.aggregate.count,
+            Concerns: data.quick_CONCERN.aggregate.count,
+            "Recent concerns": concern_areas,
+            Overachieving: !data.quick_OVERACHIEVING.aggregate.count
+              ? "0%"
+              : `${
+                  (data.quick_OVERACHIEVING.aggregate.count /
+                    data.quick_ALL.aggregate.count) *
+                  100
+                }%`,
+            "Slack Messages": allMessages.filter((m) => m.user === studentID)
+              .length,
+            ...[...schema]
+              .map(({ key, label, default_value, integration }) => {
+                const dbVal = data.updates?.nodes?.find(
+                  ({ key: k }) => k === key
+                )?.value;
+                const value = integration ? "🔗" : dbVal || default_value || "";
+                return { column: label, value };
+              })
+              .reduce(
+                (acc, { column, value }) => ({ ...acc, [column]: value }),
+                {}
+              ),
+          };
+        } catch (e) {
+          console.error(e);
+          return {};
         }
-        const concern_areas =
-          data.concern_areas.nodes
-            .filter(({ timestamp }) => getNumberOfDays(timestamp) < 30)
-            .map(({ value }) => `${value}`.toLowerCase())
-            .join(", ") || "";
-        return {
-          "Student ID": studentID,
-          Name: profile.real_name,
-          Mentors: reporters.join(", "),
-          "Check-ins": data.quick_ALL.aggregate.count,
-          Concerns: data.quick_CONCERN.aggregate.count,
-          "Recent concerns": concern_areas,
-          Overachieving: !data.quick_OVERACHIEVING.aggregate.count
-            ? "0%"
-            : `${
-                (data.quick_OVERACHIEVING.aggregate.count /
-                  data.quick_ALL.aggregate.count) *
-                100
-              }%`,
-          "Slack Messages": allMessages.filter((m) => m.user === studentID)
-            .length,
-          ...[...schema]
-            .map(({ key, label, default_value, integration }) => {
-              const dbVal = data.updates?.nodes?.find(
-                ({ key: k }) => k === key
-              )?.value;
-              const value = integration ? "🔗" : dbVal || default_value || "";
-              return { column: label, value };
-            })
-            .reduce(
-              (acc, { column, value }) => ({ ...acc, [column]: value }),
-              {}
-            ),
-        };
       })
   )) as any;
   //
