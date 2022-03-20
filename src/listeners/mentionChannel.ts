@@ -23,6 +23,26 @@ const getAllMessages = async ({ client, channelID }) => {
   return allMessages;
 };
 
+const getAllMembers = async ({ client, channelID }) => {
+  let allMembers = [];
+  const fetchSlice = async ({ next_cursor }) => {
+    const response = await client.conversations.members({
+      channel: channelID,
+      ...(next_cursor ? { cursor: next_cursor } : { limit: 100 }),
+    });
+    // const response = await client.conversations.history({
+    //   channel: channelID,
+    //   ...(next_cursor ? { cursor: next_cursor } : { limit: 100 }),
+    // });
+    allMembers = [...allMembers, ...response.members];
+    if (response.response_metadata.next_cursor) {
+      await fetchSlice({ next_cursor: response.response_metadata.next_cursor });
+    }
+  };
+  await fetchSlice({ next_cursor: false });
+  return allMembers;
+};
+
 export default async function ({ say, client, channelID, reporterID }) {
   const { profile } = await client.users.profile.get({ user: reporterID });
   const { channel: cohortInfo } = await client.conversations.info({
@@ -62,9 +82,7 @@ export default async function ({ say, client, channelID, reporterID }) {
   });
 
   const schema = await getSchema();
-  const { members: cohortList } = await client.conversations.members({
-    channel: channelID,
-  });
+  const cohortList = await getAllMembers({ client, channelID });
   const { members: volunteerList } = await client.conversations.members({
     channel: process.env.ACCESS_CHANNEL_ID,
   });
