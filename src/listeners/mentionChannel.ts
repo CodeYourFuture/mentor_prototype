@@ -158,7 +158,12 @@ export default async function ({ say, client, channelID, reporterID }) {
     // Send to google sheets
     const { SHEETS_CLIENT_EMAIL: EMAIL, SHEETS_PRIVATE_KEY: KEY } = process.env;
     const scope = ["https://www.googleapis.com/auth/drive"];
-    const JwtClient = new google.auth.JWT(EMAIL, null, KEY, scope);
+    const JwtClient = new google.auth.JWT(
+      EMAIL,
+      null,
+      KEY.replace(/\\n/g, "\n"),
+      scope
+    );
     const drive = google.drive({ version: "v3", auth: JwtClient });
     const mimeType = "application/vnd.google-apps.spreadsheet";
     const sheetName = `${cohortInfo.name} (${new Date().toISOString()})`;
