@@ -1,7 +1,14 @@
-import { gql } from 'apollo-server-express';
+import { gql } from "apollo-server-express";
 
 export default gql`
   query GET_STUDENT($studentID: String!) {
+    reporters: updates_aggregate(
+      where: { student: { _eq: $studentID }, key: { _eq: "achievement" } }
+    ) {
+      nodes {
+        reporter
+      }
+    }
     updates: updates_aggregate(
       where: { student: { _eq: $studentID }, key: { _neq: "achievement" } }
       order_by: { timestamp: desc, key: desc }
@@ -41,6 +48,14 @@ export default gql`
     ) {
       aggregate {
         count
+      }
+    }
+    concern_areas: updates_aggregate(
+      where: { student: { _eq: $studentID }, key: { _eq: "concern" } }
+    ) {
+      nodes {
+        value
+        timestamp
       }
     }
   }
