@@ -76,7 +76,7 @@ export default async function ({ say, client, channelID, reporterID }) {
 
   //
   // Fetch data for all members of channel (filter out volunteers)
-  const throttle = 2000;
+  const throttle = 4000;
   const cohort = (await Promise.all(
     cohortList
       .filter((studentID) => !volunteerList.includes(studentID))
@@ -114,9 +114,9 @@ export default async function ({ say, client, channelID, reporterID }) {
               .filter(({ timestamp }) => getNumberOfDays(timestamp) < 30)
               .map(({ value }) => `${value}`.toLowerCase())
               .join(", ") || "";
+          if (!data.quick_ALL.aggregate.count) return null;
           return {
-            "Student ID": studentID,
-            Name: profile.real_name,
+            Trainee: profile.real_name,
             Mentors: reporters.join(", "),
             "Check-ins": data.quick_ALL.aggregate.count,
             Concerns: data.quick_CONCERN.aggregate.count,
@@ -142,6 +142,7 @@ export default async function ({ say, client, channelID, reporterID }) {
                 (acc, { column, value }) => ({ ...acc, [column]: value }),
                 {}
               ),
+            "Student ID": studentID,
           };
         } catch (e) {
           console.error(e);
@@ -152,7 +153,7 @@ export default async function ({ say, client, channelID, reporterID }) {
   //
   // Convert to CSV
   try {
-    const csv = await json2csvAsync(cohort);
+    const csv = await json2csvAsync(cohort.filter(Boolean));
 
     //
     // Send to google sheets
