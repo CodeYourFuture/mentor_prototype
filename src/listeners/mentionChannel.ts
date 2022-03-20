@@ -157,17 +157,19 @@ export default async function ({ say, client, channelID, reporterID }) {
     //
     // Send to google sheets
     const { SHEETS_CLIENT_EMAIL: EMAIL, SHEETS_PRIVATE_KEY: KEY } = process.env;
-    console.log(EMAIL, KEY);
     const scope = ["https://www.googleapis.com/auth/drive"];
     const JwtClient = new google.auth.JWT(EMAIL, null, KEY, scope);
     const drive = google.drive({ version: "v3", auth: JwtClient });
     const mimeType = "application/vnd.google-apps.spreadsheet";
     const sheetName = `${cohortInfo.name} (${new Date().toISOString()})`;
+    console.log(EMAIL, KEY, drive, sheetName, JwtClient);
+    console.log("create file");
     const newFile = await drive.files.create({
       requestBody: { name: sheetName, mimeType },
       media: { mimeType: "text/csv", body: csv },
       fields: "id",
     });
+    console.log("add permissions");
     await drive.permissions.create({
       requestBody: { role: "reader", type: "user", emailAddress: email },
       fileId: newFile.data.id,

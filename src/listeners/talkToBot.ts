@@ -45,7 +45,7 @@ export default function (slack) {
       let [studentID] = message?.text?.split(/(\s+)/) || [];
       if (!studentID.startsWith("<@"))
         return say(
-          '@mention a trainee to record an update, #mention a channel to view all trainees or type "help" for more options'
+          '@mention a trainee to record an update, #mention a channel to view tracker or type "help" for more options'
         );
       //
       // if the message is a student, show the student

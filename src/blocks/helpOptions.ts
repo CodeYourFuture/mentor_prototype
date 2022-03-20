@@ -25,7 +25,7 @@ export default ({ studentID, timestamp, studentName }: any) => {
           action_id: "CLICK_SHOW_SCHEMA",
           text: {
             type: "plain_text",
-            text: "Edit Schema",
+            text: "Add/Edit questions",
             emoji: true,
           },
           value: actionValue,
