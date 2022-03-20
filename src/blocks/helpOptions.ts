@@ -1,19 +1,19 @@
 export default ({ studentID, timestamp, studentName }: any) => {
-  const actionValue = `${studentID}:${timestamp}`;
+  const actionValue = JSON.stringify({ studentID, timestamp, studentName });
   return [
-    {
-      type: "section",
-      text: {
-        type: "plain_text",
-        text: " ",
-        emoji: true,
-      },
-    },
     {
       type: "header",
       text: {
         type: "plain_text",
         text: "Help",
+        emoji: true,
+      },
+    },
+    {
+      type: "section",
+      text: {
+        type: "plain_text",
+        text: "Configure CYFBot:",
         emoji: true,
       },
     },

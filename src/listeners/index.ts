@@ -9,6 +9,7 @@ import { default as clickAddSchemaField } from "./clickAddSchemaField";
 import { default as clickSchemaDelete } from "./clickSchemaDelete";
 import { default as clickShowSchema } from "./clickShowSchema";
 import { default as clickDataDump } from "./clickDataDump";
+import clickEditSchemaDone from "./clickEditSchemaDone";
 
 // Run these listeners on launch
 
@@ -24,4 +25,5 @@ export default [
   clickSchemaDelete,
   clickShowSchema,
   clickDataDump,
+  clickEditSchemaDone,
 ];
