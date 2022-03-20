@@ -1,6 +1,6 @@
-import mentionChannel from './mentionChannel';
-import mentionHelp from './mentionHelp';
-import mentionStudent from './mentionStudent';
+import mentionChannel from "./mentionChannel";
+import mentionHelp from "./mentionHelp";
+import mentionStudent from "./mentionStudent";
 
 // When the user sends a DM to CYFBot.
 
@@ -10,7 +10,7 @@ export default function (slack) {
       //
       // Ignore edits and deletes
       const { user: reporterID, ts: timestamp } = message;
-      if (['message_changed', 'message_deleted'].includes(message.subtype))
+      if (["message_changed", "message_deleted"].includes(message.subtype))
         return;
       //
       // Ensure the user has permission
@@ -29,27 +29,27 @@ export default function (slack) {
         );
       }
       // if message is help, return help message
-      if (message.text === 'help') return mentionHelp({ say, timestamp });
+      if (message.text === "help") return mentionHelp({ say, timestamp });
 
       //
       // if message is a channel link to data
-      if (message.text.startsWith('<#')) {
+      if (message.text.startsWith("<#")) {
         const channelID = message.text
-          .split('|')[0]
-          .split('<#')[1]
-          .split('>')[0];
+          .split("|")[0]
+          .split("<#")[1]
+          .split(">")[0];
         return await mentionChannel({ say, client, channelID, reporterID });
       }
       //
       // if the message doesn't start with an @student show the instructions
       let [studentID] = message?.text?.split(/(\s+)/) || [];
-      if (!studentID.startsWith('<@'))
+      if (!studentID.startsWith("<@"))
         return say(
           '@mention a trainee to record an update, #mention a channel to view all trainees or type "help" for more options'
         );
       //
       // if the message is a student, show the student
-      studentID = studentID.replace('<@', '').replace('>', '');
+      studentID = studentID.replace("<@", "").replace(">", "");
       const isMentionedVolunteer = volunteerList.includes(studentID);
       if (isMentionedVolunteer) {
         const { profile } = await client.users.profile.get({ user: studentID });
@@ -57,12 +57,12 @@ export default function (slack) {
       }
       await mentionStudent({ say, client, studentID, timestamp });
     } catch (error) {
-      if (error.data.error === 'not_in_channel') {
+      if (error?.data?.error === "not_in_channel") {
         return say(
           `I am not in that Slack channel. To add me, just post a message in the channel mentioning @CYFBot`
         );
       }
-      say(`Error: ${error?.data?.error || error?.message || 'Unknown'}`);
+      say(`Error: ${error?.data?.error || error?.message || "Unknown"}`);
       console.error(error);
     }
   });
