@@ -105,7 +105,7 @@ export default async function ({ say, client, channelID, reporterID }) {
             user: studentID,
           });
 
-          console.log("Processing", profile.real_name);
+          console.log(i, "Processing", profile.real_name);
           const { data } = await database.query({
             query: getStudent,
             variables: { studentID },
