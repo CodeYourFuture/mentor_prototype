@@ -7,7 +7,7 @@
     "node": "^14.17.3"
   },
   "scripts": {
-    "build": "tsc",
+    "build": "tsc -t es5",
     "postinstall": "npm run build",
     "start": "node build/index.js",
     "dev": "PORT=5000 nodemon --exec ts-node src/index.ts",
@@ -17,7 +17,6 @@
     "@slack/bolt": "^3.6.0",
     "apollo-boost": "^0.4.9",
     "apollo-server-express": "^3.3.0",
-    "cron-schedule": "^3.0.5",
     "cross-fetch": "^3.1.4",
     "dotenv": "^10.0.0",
     "googleapis": "^89.0.0",
@@ -31,6 +30,7 @@
     "timeago.js": "^4.0.2",
     "ts-node": "^8.10.2",
     "typescript": "^4.4.3",
+    "cron-schedule": "^3.0.5",
     "uuid": "^8.3.2"
   },
   "devDependencies": {
