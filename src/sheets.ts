@@ -205,12 +205,12 @@ async function getChannel({ client, channel }) {
 }
 
 export default async () => {
-  console.log("update");
+  const auth = await slack.client.auth.test();
   const { channels } = await slack.client.users.conversations({
-    user: process.env.BOT_USER_ID,
+    user: auth.user_id,
   });
-  const bot = await slack.client.bots.info();
-  console.log(channels, process.env.BOT_USER_ID, bot);
+  // const bot = await slack.client.bots.info();
+  // console.log(channels, process.env.BOT_USER_ID, bot, test);
   for (const channel of channels.filter(
     (channel) => channel.id !== process.env.ACCESS_CHANNEL_ID
   )) {
