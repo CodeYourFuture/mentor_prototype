@@ -3,43 +3,43 @@ export default ({ studentName, studentID, timestamp, data, schema }: any) => {
   const payload = { studentID, timestamp, studentName };
   return [
     {
-      type: 'header',
+      type: "header",
       text: {
-        type: 'plain_text',
-        text: 'Tracker',
+        type: "plain_text",
+        text: "Tracker",
         emoji: true,
       },
     },
     {
-      type: 'context',
+      type: "context",
       elements: [
         {
-          type: 'mrkdwn',
+          type: "mrkdwn",
           text: `Please keep this information up to date.\n\n`,
         },
       ],
     },
     ...schema
-      .filter(({ integration }) => !integration)
+      // .filter(({ integration }) => !integration)
       .map(({ key, label, default_value }) => {
         const dbVal = values?.find(({ key: k }) => k === key)?.value;
         const currentValue = dbVal || default_value;
         const actionValue = JSON.stringify({ ...payload, key, currentValue });
         return {
-          type: 'section',
+          type: "section",
           text: {
-            type: 'mrkdwn',
+            type: "mrkdwn",
             text: `${label}`,
           },
           accessory: {
-            type: 'button',
+            type: "button",
             text: {
-              type: 'plain_text',
+              type: "plain_text",
               text: currentValue || `Not set`,
               emoji: true,
             },
             value: actionValue,
-            action_id: 'CLICK_UPDATE_VALUE',
+            action_id: "CLICK_UPDATE_VALUE",
           },
         };
       }),

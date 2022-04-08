@@ -38,7 +38,12 @@ export default function (slack) {
           .split("|")[0]
           .split("<#")[1]
           .split(">")[0];
-        return await mentionChannel({ say, client, channelID, reporterID });
+        return await mentionChannel({
+          say,
+          client,
+          channelID,
+          reporterID,
+        });
       }
       //
       // if the message doesn't start with an @student show the instructions

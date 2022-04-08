@@ -30,16 +30,6 @@ export default ({ studentID, timestamp, studentName }: any) => {
           },
           value: actionValue,
         },
-        // {
-        //   type: "button",
-        //   action_id: "CLICK_DATA_DUMP",
-        //   text: {
-        //     type: "plain_text",
-        //     text: "Export Data",
-        //     emoji: true,
-        //   },
-        //   value: actionValue,
-        // },
       ],
     },
     {
