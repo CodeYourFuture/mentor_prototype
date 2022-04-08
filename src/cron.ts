@@ -11,6 +11,7 @@ var cron = require("node-cron");
 
   // Update the sheet every 15 mins
   console.log("schedule cron");
+  await sheets();
   cron.schedule("*/15 * * * *", () => {
     sheets();
   });
