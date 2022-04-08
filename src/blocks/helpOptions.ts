@@ -30,6 +30,16 @@ export default ({ studentID, timestamp, studentName }: any) => {
           },
           value: actionValue,
         },
+        {
+          type: "button",
+          action_id: "EXPORT_DATA",
+          text: {
+            type: "plain_text",
+            text: "Update spreadsheets",
+            emoji: true,
+          },
+          value: actionValue,
+        },
       ],
     },
     {
