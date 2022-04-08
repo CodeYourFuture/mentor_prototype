@@ -209,7 +209,8 @@ export default async () => {
   const { channels } = await slack.client.users.conversations({
     user: process.env.BOT_USER_ID,
   });
-  console.log(channels);
+  const bot = await slack.client.bots.info();
+  console.log(channels, process.env.BOT_USER_ID, bot);
   for (const channel of channels.filter(
     (channel) => channel.id !== process.env.ACCESS_CHANNEL_ID
   )) {
