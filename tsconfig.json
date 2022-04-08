@@ -4,6 +4,7 @@
     "sourceMap": true,
     "target": "ES2015",
     "lib": ["esnext", "dom"],
+    "moduleResolution": "node",
     "outDir": "build",
     "esModuleInterop": true
   },
