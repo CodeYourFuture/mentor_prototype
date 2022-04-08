@@ -12,7 +12,9 @@
     "src/cron/cron.js",
     "src/cron/compile.mjs",
     "src/cron.mts",
-    "cron.ts"
+    "cron.ts",
+    "src/sheets.ts",
+    "src/cron.ts"
   ],
   "exclude": ["node_modules", "**/*.spec.ts"]
 }
