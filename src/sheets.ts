@@ -204,7 +204,8 @@ async function getChannel({ client, channel }) {
   }
 }
 
-(async () => {
+export default async () => {
+  console.log("update");
   const { channels } = await slack.client.users.conversations({
     user: process.env.BOT_USER_ID,
   });
@@ -261,4 +262,4 @@ async function getChannel({ client, channel }) {
   }
 
   // TODO: delete all files not in validFiles
-})();
+};
