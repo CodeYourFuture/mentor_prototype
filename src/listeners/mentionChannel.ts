@@ -28,5 +28,6 @@ export default async function ({ say, client, channelID, reporterID }) {
     say(
       `Access denied. Please add CYFBot to the ${channel.name} channel to generate a report.`
     );
+    console.log(e);
   }
 }
