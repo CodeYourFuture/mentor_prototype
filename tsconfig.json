@@ -2,7 +2,7 @@
   "compilerOptions": {
     "removeComments": true,
     "sourceMap": true,
-    "target": "esnext",
+    "target": "ES2017",
     "lib": ["esnext", "dom"],
     "outDir": "build",
     "esModuleInterop": true
