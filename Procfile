@@ -1,2 +1,2 @@
-slackbot: node build/index.js
-datagen: node build/cron.js
+slack-listener: node build/index.js
+cron-data-export: node build/cron.js

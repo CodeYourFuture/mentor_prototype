@@ -10,7 +10,7 @@ var cron = require("node-cron");
   // console.log("⚡️ CYFBot is listening!");
 
   // Update the sheet every 15 mins
-
+  console.log("schedule cron");
   cron.schedule("*/15 * * * *", () => {
     sheets();
   });

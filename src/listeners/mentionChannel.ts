@@ -22,6 +22,10 @@ export default async function ({ say, client, channelID, reporterID }) {
   try {
     const files = await drive.files.list({ q: `name='${channel.name}'` });
     const file = files.data.files[0];
+    if (!file) {
+      console.log({ channelID, files });
+      return say("No data found");
+    }
     const url = `https://drive.google.com/file/u/0/d/${file.id}/preview`;
     say(url);
   } catch (e) {
