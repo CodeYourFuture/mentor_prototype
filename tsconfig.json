@@ -2,9 +2,9 @@
   "compilerOptions": {
     "removeComments": true,
     "sourceMap": true,
-    "target": "ES2015",
+    "target": "es2017",
     "lib": ["esnext", "dom"],
-    "moduleResolution": "node",
+    // "moduleResolution": "node",
     "outDir": "build",
     "esModuleInterop": true
   },
