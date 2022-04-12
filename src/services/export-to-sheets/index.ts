@@ -1,4 +1,10 @@
 require("dotenv").config();
+import slack from "./clients/slack";
+import listeners from "./listeners";
+// import sheets from "./sheets";
+var cron = require("node-cron");
+
+require("dotenv").config();
 
 import database, { getSchema } from "./clients/apollo";
 import getStudent from "./queries/getStudent.graphql";
@@ -204,7 +210,7 @@ async function getChannel({ client, channel }) {
   }
 }
 
-export default async () => {
+const sheets = async () => {
   const auth = await slack.client.auth.test();
   const { channels } = await slack.client.users.conversations({
     user: auth.user_id,
@@ -265,3 +271,16 @@ export default async () => {
 
   // TODO: delete all files not in validFiles
 };
+
+(async () => {
+  // await slack.start(Number(process.env.PORT) || 5000);
+  // listeners.forEach((listen) => listen(slack));
+  // console.log("⚡️ CYFBot is listening!");
+
+  // Update the sheet every 15 mins
+  console.log("schedule cron");
+  await sheets();
+  cron.schedule("*/30 * * * *", () => {
+    sheets();
+  });
+})();

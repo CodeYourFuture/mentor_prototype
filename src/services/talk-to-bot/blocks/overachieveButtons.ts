@@ -1,5 +1,5 @@
 export default ({ studentID, timestamp, studentName }: any) => {
-  const actionValue = JSON.stringify({ studentID, timestamp });
+  const data = JSON.stringify({ studentID, timestamp });
   return [
     {
       type: "section",
@@ -39,7 +39,7 @@ export default ({ studentID, timestamp, studentName }: any) => {
             text: "Technically gifted",
             emoji: true,
           },
-          value: actionValue,
+          value: data,
         },
         {
           type: "button",
@@ -49,7 +49,7 @@ export default ({ studentID, timestamp, studentName }: any) => {
             text: "Strong drive and motivation",
             emoji: true,
           },
-          value: actionValue,
+          value: data,
         },
         {
           type: "button",
@@ -59,7 +59,7 @@ export default ({ studentID, timestamp, studentName }: any) => {
             text: "Great team spirit",
             emoji: true,
           },
-          value: actionValue,
+          value: data,
         },
       ],
     },

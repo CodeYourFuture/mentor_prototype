@@ -1,10 +1,10 @@
-# CYFBot
+# Mentor
 
-A Slackbot for tracking trainee data.
+A platform for tracking trainee data.
 
-## How to use CYFBot
+## Talk-to-Bot
 
-CYF bot allows mentors to update trainee information and review cohort progress.
+The talk-to-bot service allows mentors to update trainee information and review cohort progress.
 
 #### Update Trainee Information
 

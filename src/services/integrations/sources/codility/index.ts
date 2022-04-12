@@ -1,4 +1,26 @@
-import { IntegrationType } from "./github";
+//
+// Integration service: example.io
+//
+type Response = { score: number; hasTopScore: boolean };
+
+// An integration is a FUNCTION which runs PER INDIVIDUAL TRAINEE. We receive:
+export default async function (
+  id: string, // The trainee's ID for this service (provided by the trainee)
+  group?: Response[] // 2. (Optional) Data for other trainees (for comparison)
+): Promise<Response> {
+  //
+  // Here we fetch data from our external service
+  const integration = `https://example.io/user=${id}&key=${process.env.api_key}`;
+  const { score }: any = await fetch(integration);
+
+  // Here we compare this trainee's score to others
+  const hasTopScore = Math.max(...group.map(({ score }) => score)) === score;
+
+  // Return data to store for this trainee
+  return { score, hasTopScore };
+}
+
+import { IntegrationType } from "./github/trainee";
 
 const Integration = (integrationID) => {
   // /**
