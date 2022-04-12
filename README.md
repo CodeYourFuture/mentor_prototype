@@ -2,18 +2,6 @@
 
 A platform for tracking trainee data.
 
-## Talk-to-Bot
-
-The talk-to-bot service allows mentors to update trainee information and review cohort progress.
-
-#### Update Trainee Information
-
-Send a DM To CYFBot with the @trainee_name.
-
-#### Review cohort progress
-
-Send a DM To CYFBot with the #cohort_channel_name.
-
 ## Dev Quickstart
 
 Message Dom Vinyard on CYF Slack and I can help you get set up with env variables etc.
@@ -56,3 +44,15 @@ SHEETS_PRIVATE_KEY="-----BEGIN PRIVATE KEY-----\nxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 ```bash
 yarn dev
 ```
+
+## Talk-to-Bot
+
+The talk-to-bot service allows mentors to update trainee information and review cohort progress.
+
+#### Update Trainee Information
+
+Send a DM To CYFBot with the @trainee_name.
+
+#### Review cohort progress
+
+Send a DM To CYFBot with the #cohort_channel_name.

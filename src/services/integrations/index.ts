@@ -5,7 +5,7 @@ var cron = require("node-cron");
 require("dotenv").config();
 
 import database, { getSchema } from "../../clients/apollo";
-import getStudent from "../bot/queries/getStudent.graphql";
+import getStudent from "../talk-to-bot/queries/getStudent.graphql";
 import fs from "fs";
 
 const throttle = 2000;
@@ -94,7 +94,7 @@ async function getChannel({ client, channel }) {
   // TODO: save to db
 }
 
-const integrations = async () => {
+export const integrations = async () => {
   const auth = await slack.client.auth.test();
   const { channels } = await slack.client.users.conversations({
     user: auth.user_id,
@@ -105,11 +105,3 @@ const integrations = async () => {
     await getChannel({ client: slack.client, channel });
   }
 };
-
-(async () => {
-  console.log("fetch integrations");
-  await integrations();
-  cron.schedule("*/30 * * * *", () => {
-    integrations();
-  });
-})();

@@ -1,20 +1,19 @@
 require("dotenv").config();
-import slack from "./clients/slack";
-import listeners from "./listeners";
+import slack from "../../clients/slack";
+// import listeners from "../talk-to-bot/listeners";
 // import sheets from "./sheets";
-var cron = require("node-cron");
 
 require("dotenv").config();
 
-import database, { getSchema } from "./clients/apollo";
-import getStudent from "./queries/getStudent.graphql";
-import getCheckInReporters from "./queries/getCheckInReporters.graphql";
+import database, { getSchema } from "../../clients/apollo";
+import getStudent from "../talk-to-bot/queries/getStudent.graphql";
+import getCheckInReporters from "../talk-to-bot/queries/getCheckInReporters.graphql";
 import { json2csvAsync } from "json-2-csv";
 import { google } from "googleapis";
 import fs from "fs";
 
-import slack from "./clients/slack";
-import listeners from "./listeners";
+// import slack from "../../clients/slack";
+// import listeners from "../talk-to-bot/listeners";
 // When the user #mention's a channel
 // Generate a Google Sheet and email it to them
 
@@ -58,12 +57,12 @@ const getAllMembers = async ({ client, channelID }) => {
 };
 
 const getIntegrationData = async ({ service, externalID }) => {
-  const integrationsDir = "./src/integrations";
+  const integrationsDir = "src/services/integrations/sources";
   const integrations = fs
     .readdirSync(integrationsDir)
     .map((file) => file.replace(".ts", ""));
   if (!integrations.includes(service) || !externalID) return [];
-  const { default: integration } = require(`./integrations/${service}.ts`);
+  const { default: integration } = require(`${integrationsDir}/${service}.ts`);
   const integrationData = (await integration(externalID)).map(
     ({ column, value }) => ({ column: `${service}_${column}`, value })
   );
@@ -210,7 +209,7 @@ async function getChannel({ client, channel }) {
   }
 }
 
-const sheets = async () => {
+export const sheets = async () => {
   const auth = await slack.client.auth.test();
   const { channels } = await slack.client.users.conversations({
     user: auth.user_id,
@@ -271,16 +270,3 @@ const sheets = async () => {
 
   // TODO: delete all files not in validFiles
 };
-
-(async () => {
-  // await slack.start(Number(process.env.PORT) || 5000);
-  // listeners.forEach((listen) => listen(slack));
-  // console.log("⚡️ CYFBot is listening!");
-
-  // Update the sheet every 15 mins
-  console.log("schedule cron");
-  await sheets();
-  cron.schedule("*/30 * * * *", () => {
-    sheets();
-  });
-})();

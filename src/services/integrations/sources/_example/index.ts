@@ -1,6 +1,7 @@
 //
 // Integration service: example.io
 //
+type Response = { score: number; isTopScore: boolean };
 
 // An integration is a FUNCTION which runs PER TRAINEE
 export default async function (
@@ -18,5 +19,3 @@ export default async function (
   // This response data is stored against the user in JSON format, ready for querying
   return { score, isTopScore };
 }
-
-type Response = { score: number; isTopScore: boolean };

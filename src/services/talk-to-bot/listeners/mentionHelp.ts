@@ -1,6 +1,6 @@
 import helpOptions from "../blocks/helpOptions";
 import schemaBlocks from "../blocks/schemaList";
-import { getSchema } from "../clients/apollo";
+import { getSchema } from "../../../clients/apollo";
 
 // When the user asks for help
 // Display the schema list

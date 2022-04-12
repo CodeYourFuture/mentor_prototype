@@ -1,12 +1,12 @@
-import fieldModal from '../blocks/fieldModal';
-import schemaModal from '../blocks/schemaModal';
-import { getSchema } from '../clients/apollo';
+import fieldModal from "../blocks/fieldModal";
+import schemaModal from "../blocks/schemaModal";
+import { getSchema } from "../../../clients/apollo";
 
 // When the user clicks a button to edit a value
 // open the modal to edit the value.
 
 export default function (slack) {
-  slack.action('ADD_SCHEMA_FIELD', async ({ ack, body, client }: any) => {
+  slack.action("ADD_SCHEMA_FIELD", async ({ ack, body, client }: any) => {
     await ack();
     const channelID = body.channel.id;
     const timestamp = body.message.ts;
@@ -15,7 +15,7 @@ export default function (slack) {
       view: schemaModal({
         timestamp,
         channelID,
-        mode: 'add',
+        mode: "add",
       }),
     });
   });

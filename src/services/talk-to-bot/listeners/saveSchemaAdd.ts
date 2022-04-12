@@ -1,13 +1,13 @@
-import database, { getSchema } from '../clients/apollo';
-import addSchemaField from '../queries/addSchemaField.graphql';
-import { getValuesFromForm, refreshSchemaList } from './saveSchemaEdit';
+import database, { getSchema } from "../../../clients/apollo";
+import addSchemaField from "../queries/addSchemaField.graphql";
+import { getValuesFromForm, refreshSchemaList } from "./saveSchemaEdit";
 
 // When the user updates a schema field
 // save it to the schema table
 
 export default function (slack) {
   slack.view(
-    'SAVE_SCHEMA_ADD',
+    "SAVE_SCHEMA_ADD",
     async ({ ack, body, view, say, client }: any) => {
       const metadata = JSON.parse(body.view.private_metadata || {});
       const { timestamp, channelID, schemaKey } = metadata;

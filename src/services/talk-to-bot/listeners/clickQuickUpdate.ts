@@ -1,5 +1,5 @@
 import addRecord from "../queries/addRecord.graphql";
-import database from "../clients/apollo";
+import database from "../../../clients/apollo";
 import concernButtons from "../blocks/concernButtons";
 
 // When the user taps one of the quick update buttons

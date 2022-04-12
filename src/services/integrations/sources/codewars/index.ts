@@ -1,4 +1,4 @@
-import { IntegrationType } from "./github";
+import { IntegrationType } from "../github";
 
 const Integration = (integrationID) => {
   // /** Codewars has a public API; docs here:

@@ -1,13 +1,13 @@
-import addRecord from '../queries/addRecord.graphql';
-import database from '../clients/apollo';
-import { studentHome } from './mentionStudent';
+import addRecord from "../queries/addRecord.graphql";
+import database from "../../../clients/apollo";
+import { studentHome } from "./mentionStudent";
 
 // When the user sumbits the 'edit field' modal
 // save it to the database and refresh the student home form
 
 export default function (slack) {
   slack.view(
-    'SAVE_UPDATE_VALUE',
+    "SAVE_UPDATE_VALUE",
     async ({ ack, body, view, say, client }: any) => {
       const value =
         body.view.state.values.view.input?.value ||
@@ -29,7 +29,7 @@ export default function (slack) {
       await client.chat.update({
         channel: channelID,
         ts: timestamp,
-        text: '',
+        text: "",
         as_user: true,
         blocks: homeBlocks,
       });

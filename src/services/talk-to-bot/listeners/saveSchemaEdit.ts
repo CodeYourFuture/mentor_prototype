@@ -1,4 +1,4 @@
-import database, { getSchema } from "../clients/apollo";
+import database, { getSchema } from "../../../clients/apollo";
 import updateSchema from "../queries/updateSchema.graphql";
 import schemaList from "../blocks/schemaList";
 

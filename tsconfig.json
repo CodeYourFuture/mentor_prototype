@@ -15,7 +15,7 @@
     "src/cron.mts",
     "cron.ts",
     "src/sheets.ts",
-    "src/cron.ts"
+    "src/data-export.ts"
   ],
   "exclude": ["node_modules", "**/*.spec.ts"]
 }

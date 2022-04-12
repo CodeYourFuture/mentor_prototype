@@ -1,11 +1,11 @@
-import fieldModal from '../blocks/fieldModal';
-import { getSchema } from '../clients/apollo';
+import fieldModal from "../blocks/fieldModal";
+import { getSchema } from "../../../clients/apollo";
 
 // When the user clicks a button to edit a value
 // open the modal to edit the value.
 
 export default function (slack) {
-  slack.action('CLICK_UPDATE_VALUE', async ({ ack, body, client }: any) => {
+  slack.action("CLICK_UPDATE_VALUE", async ({ ack, body, client }: any) => {
     await ack();
     const { studentID, timestamp, key, studentName, currentValue, data } =
       JSON.parse(body.actions?.[0]?.value);

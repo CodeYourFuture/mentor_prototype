@@ -1,5 +1,5 @@
 import fieldModal from "../blocks/fieldModal";
-import { getSchema } from "../clients/apollo";
+import { getSchema } from "../../../clients/apollo";
 import helpOptions from "../blocks/helpOptions";
 import schemaBlocks from "../blocks/schemaList";
 import mentionHelp from "./mentionHelp";
