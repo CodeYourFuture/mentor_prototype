@@ -20,8 +20,8 @@ export default function (slack) {
       `REPORT_STATUS_${status}`,
       async ({ ack, body, say, client }: any) => {
         await ack();
-        const [studentID, initialTimestamp] =
-          body.actions?.[0]?.value?.split(":");
+        const { studentID, initialTimestamp } =
+          JSON.parse(body.actions?.[0]?.value) || {};
         client.chat.delete({
           channel: body.channel.id,
           ts: body.message.ts,

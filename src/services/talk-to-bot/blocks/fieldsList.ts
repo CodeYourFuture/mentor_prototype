@@ -6,7 +6,7 @@ export default ({ studentName, studentID, timestamp, data, schema }: any) => {
       type: "header",
       text: {
         type: "plain_text",
-        text: "Tracker",
+        text: "Trainee Information",
         emoji: true,
       },
     },

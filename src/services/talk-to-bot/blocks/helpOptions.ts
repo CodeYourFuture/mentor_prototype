@@ -1,54 +1,77 @@
-export default ({ studentID, timestamp, studentName }: any) => {
+import { getChannelSheet } from "../../../clients/sheets";
+
+export default async ({
+  studentID,
+  timestamp,
+  studentName,
+  mentors,
+  channels,
+  client,
+}: any) => {
   const actionValue = JSON.stringify({ studentID, timestamp, studentName });
+  const mentorBlocks = [];
+  const channelBlocks = await Promise.all(
+    channels.map(async ({ id, name }) => {
+      const actionValue = JSON.stringify({ id, name, timestamp });
+      const file = await getChannelSheet({ client, channelID: id });
+      return {
+        type: "section",
+        text: {
+          type: "mrkdwn",
+          text: `${name}`,
+        },
+        accessory: {
+          type: "button",
+          text: {
+            type: "plain_text",
+            text: !file?.id ? "⚠️" : "🔍",
+            emoji: true,
+          },
+          url: `https://drive.google.com/file/u/0/d/${file?.id}/preview`,
+        },
+      };
+    })
+  );
   return [
     {
       type: "header",
       text: {
         type: "plain_text",
-        text: "Help",
+        text: "Channels",
         emoji: true,
       },
     },
+    ...(channelBlocks.length
+      ? channelBlocks
+      : [
+          {
+            type: "section",
+            text: {
+              type: "plain_text",
+              text: "No channels found. Invite me to a channel to start tracking it.",
+              emoji: true,
+            },
+          },
+        ]),
     {
-      type: "section",
+      type: "header",
       text: {
         type: "plain_text",
-        text: "Configure CYFBot:",
+        text: "Mentors",
         emoji: true,
       },
     },
-    {
-      type: "actions",
-      elements: [
-        {
-          type: "button",
-          action_id: "CLICK_SHOW_SCHEMA",
-          text: {
-            type: "plain_text",
-            text: "Add/Edit questions",
-            emoji: true,
+    ...(mentorBlocks.length
+      ? mentorBlocks
+      : [
+          {
+            type: "section",
+            text: {
+              type: "plain_text",
+              text: "No mentors found. Please specify a mentor channel.",
+              emoji: true,
+            },
           },
-          value: actionValue,
-        },
-        {
-          type: "button",
-          action_id: "EXPORT_DATA",
-          text: {
-            type: "plain_text",
-            text: "Update spreadsheets",
-            emoji: true,
-          },
-          value: actionValue,
-        },
-      ],
-    },
-    {
-      type: "section",
-      text: {
-        type: "plain_text",
-        text: " ",
-        emoji: true,
-      },
-    },
+        ]),
   ];
 };

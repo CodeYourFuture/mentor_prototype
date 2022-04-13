@@ -1,11 +1,12 @@
 import mentionChannel from "./mentionChannel";
-import mentionHelp from "./mentionHelp";
+import mentionConfig from "./mentionConfig";
+import mentionData from "./mentionData";
 import mentionStudent from "./mentionStudent";
 
 // When the user sends a DM to CYFBot.
 
 export default function (slack) {
-  slack.message(async ({ message, say, client }: any) => {
+  slack.message(async ({ message, say, client, body }: any) => {
     try {
       //
       // Ignore edits and deletes
@@ -28,8 +29,10 @@ export default function (slack) {
           `To use CYFbot you must be part of the ${accessChannelName} channel`
         );
       }
-      // if message is help, return help message
-      if (message.text === "help") return mentionHelp({ say, timestamp });
+      // help & status
+      if (message.text === "data")
+        return mentionData({ say, timestamp, client });
+      if (message.text === "config") return mentionConfig({ say, timestamp });
 
       //
       // if message is a channel link to data
@@ -42,7 +45,7 @@ export default function (slack) {
           say,
           client,
           channelID,
-          reporterID,
+          timestamp,
         });
       }
       //
@@ -50,7 +53,7 @@ export default function (slack) {
       let [studentID] = message?.text?.split(/(\s+)/) || [];
       if (!studentID.startsWith("<@"))
         return say(
-          '@mention a trainee to record an update, #mention a channel to view tracker or type "help" for more options'
+          '@mention a trainee to record an update, #mention a channel to view data or type "data" or "config" for more options'
         );
       //
       // if the message is a student, show the student
@@ -64,7 +67,7 @@ export default function (slack) {
     } catch (error) {
       if (error?.data?.error === "not_in_channel") {
         return say(
-          `I am not in that Slack channel. To add me, just post a message in the channel mentioning @CYFBot`
+          `I am not a member of that Slack channel. I can only see channels you add me to.`
         );
       }
       say(`Error: ${error?.data?.error || error?.message || "Unknown"}`);

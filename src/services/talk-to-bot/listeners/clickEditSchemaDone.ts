@@ -2,7 +2,7 @@ import fieldModal from "../blocks/fieldModal";
 import { getSchema } from "../../../clients/apollo";
 import helpOptions from "../blocks/helpOptions";
 import schemaBlocks from "../blocks/schemaList";
-import mentionHelp from "./mentionHelp";
+import mentionData from "./mentionData";
 
 // When the user clicks a button to edit a value
 // open the modal to edit the value.
@@ -20,7 +20,7 @@ export default function (slack) {
         channel: body.channel.id,
         ts: body.message.ts,
       });
-      mentionHelp({ say, timestamp: body.message.thread_ts });
+      await mentionData({ say, timestamp: body.message.thread_ts, client });
     } catch (error) {
       console.error(error);
     }

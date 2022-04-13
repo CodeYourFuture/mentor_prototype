@@ -7,7 +7,6 @@ import { default as saveSchemaEdit } from "./saveSchemaEdit";
 import { default as saveSchemaAdd } from "./saveSchemaAdd";
 import { default as clickAddSchemaField } from "./clickAddSchemaField";
 import { default as clickSchemaDelete } from "./clickSchemaDelete";
-import { default as clickShowSchema } from "./clickShowSchema";
 import { default as clickDataDump } from "./clickDataDump";
 import clickEditSchemaDone from "./clickEditSchemaDone";
 import clickExportData from "./clickExportData";
@@ -24,7 +23,6 @@ export default [
   clickAddSchemaField,
   saveSchemaAdd,
   clickSchemaDelete,
-  clickShowSchema,
   clickDataDump,
   clickEditSchemaDone,
   clickExportData,

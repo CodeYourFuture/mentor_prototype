@@ -1,5 +1,5 @@
 require("dotenv").config();
-import slack from "../../clients/slack";
+import slack, { getSlackChannels } from "../../clients/slack";
 // import listeners from "../talk-to-bot/listeners";
 // import sheets from "./sheets";
 
@@ -210,15 +210,10 @@ async function getChannel({ client, channel }) {
 }
 
 export const sheets = async () => {
-  const auth = await slack.client.auth.test();
-  const { channels } = await slack.client.users.conversations({
-    user: auth.user_id,
-  });
+  const channels = await getSlackChannels();
   // const bot = await slack.client.bots.info();
   // console.log(channels, process.env.BOT_USER_ID, bot, test);
-  for (const channel of channels.filter(
-    (channel) => channel.id !== process.env.ACCESS_CHANNEL_ID
-  )) {
+  for (const channel of channels) {
     const csv = await getChannel({ client: slack.client, channel });
 
     //

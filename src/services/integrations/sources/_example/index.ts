@@ -1,7 +1,8 @@
+import { Response } from "../..";
+
 //
 // Integration service: example.io
 //
-type Response = { score: number; isTopScore: boolean };
 
 // An integration is a FUNCTION which runs PER TRAINEE
 export default async function (
@@ -14,8 +15,13 @@ export default async function (
   const { score }: any = await fetch(`example.io/user=${id}&key=${key}`);
 
   // Compare this trainee's score to their classmates
-  const isTopScore = Math.max(...group.map(({ score }) => score)) === score;
+  const scores = group.map((t) => t.find((d) => d.key === "score").value);
+  const isTopScore = Math.max(...(scores as number[])) === score;
+  const sentiment = isTopScore ? "positive" : "neutral";
 
   // This response data is stored against the user in JSON format, ready for querying
-  return { score, isTopScore };
+  return [
+    { key: "isTopScore", value: isTopScore, favourite: true }, // 'favourite' identifies this as a key metric
+    { key: "score", value: score, sentiment }, // 'sentiment' determines the colour of the cell in google sheets
+  ];
 }

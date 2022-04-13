@@ -4,6 +4,13 @@ var cron = require("node-cron");
 
 require("dotenv").config();
 
+export type Response = {
+  key: string;
+  value: string | number | boolean;
+  favourite?: boolean;
+  sentiment?: "positive" | "negative" | "neutral";
+}[];
+
 import database, { getSchema } from "../../clients/apollo";
 import getStudent from "../talk-to-bot/queries/getStudent.graphql";
 import fs from "fs";

@@ -4,7 +4,7 @@ export default ({ schema, timestamp }) => {
       type: "section",
       text: {
         type: "plain_text",
-        text: "Schema settings. Please don't change these unless you know what you're doing 😅",
+        text: "Schema settings. Please don't change these unless you know what you're doing.",
         emoji: true,
       },
     },
@@ -36,16 +36,7 @@ export default ({ schema, timestamp }) => {
           action_id: "ADD_SCHEMA_FIELD",
           text: {
             type: "plain_text",
-            text: "➕ Add Question",
-            emoji: true,
-          },
-        },
-        {
-          type: "button",
-          action_id: "ADD_SCHEMA_DONE",
-          text: {
-            type: "plain_text",
-            text: "← Back",
+            text: "➕ Add Question/Integration",
             emoji: true,
           },
         },

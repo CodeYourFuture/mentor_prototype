@@ -4,34 +4,30 @@ import getCheckInReporters from "../queries/getCheckInReporters.graphql";
 import { json2csvAsync } from "json-2-csv";
 import { google } from "googleapis";
 import fs from "fs";
+import { getChannelSheet } from "./../../../clients/sheets";
 
-export default async function ({ say, client, channelID, reporterID }) {
-  const { SHEETS_CLIENT_EMAIL: EMAIL, SHEETS_PRIVATE_KEY: KEY } = process.env;
-  const scope = ["https://www.googleapis.com/auth/drive"];
-  const JwtClient = new google.auth.JWT(
-    EMAIL,
-    null,
-    KEY.replace(/\\n/g, "\n"),
-    scope
-  );
-  const drive = google.drive({ version: "v3", auth: JwtClient });
-
+export default async function ({ say, client, channelID, timestamp }) {
   const { channel } = await client.conversations.info({ channel: channelID });
 
   // TODO, get the channel name
   try {
-    const files = await drive.files.list({ q: `name='${channel.name}'` });
-    const file = files.data.files[0];
+    const file = await getChannelSheet({ client, channelID: channel.id });
     if (!file) {
-      console.log({ channelID, files });
-      return say("No data found");
+      await say({
+        text: "No data found",
+        thread_ts: timestamp,
+      });
     }
     const url = `https://drive.google.com/file/u/0/d/${file.id}/preview`;
-    say(url);
+    await say({
+      text: url,
+      thread_ts: timestamp,
+    });
   } catch (e) {
-    say(
-      `Access denied. Please add CYFBot to the ${channel.name} channel to generate a report.`
-    );
+    await say({
+      text: `Access denied. Please add CYFBot to the ${channel.name} channel to generate a report.`,
+      thread_ts: timestamp,
+    });
     console.log(e);
   }
 }
