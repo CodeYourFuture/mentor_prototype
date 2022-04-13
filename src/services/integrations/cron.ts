@@ -3,8 +3,7 @@ import { integrations } from ".";
 var cron = require("node-cron");
 
 (async () => {
-  console.log("fetch integrations");
-  await integrations();
+  console.log("integrations cron");
   cron.schedule("*/30 * * * *", () => {
     integrations();
   });

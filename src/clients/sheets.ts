@@ -1,18 +1,19 @@
 import { google } from "googleapis";
 
-const driveClient = async function () {
+export const JwtClient = function () {
   const { SHEETS_CLIENT_EMAIL: EMAIL, SHEETS_PRIVATE_KEY: KEY } = process.env;
-  const scope = ["https://www.googleapis.com/auth/drive"];
-  const JwtClient = new google.auth.JWT(
-    EMAIL,
-    null,
-    KEY.replace(/\\n/g, "\n"),
-    scope
-  );
-  const drive = google.drive({ version: "v3", auth: JwtClient });
-  return drive;
+  const scope = [
+    "https://www.googleapis.com/auth/drive",
+    "https://www.googleapis.com/auth/admin.directory.user",
+    "https://www.googleapis.com/auth/admin.directory.group",
+  ];
+  return new google.auth.GoogleAuth({
+    keyFilename: "./src/clients/cyfbot-3ff286a4571b.json",
+    // keyFile: "./src/clients/cyfbot-3ff286a4571b.json",
+    scopes: scope,
+    projectId: "cyfbot",
+  });
 };
-export default driveClient;
 
 export const getChannelSheet = async ({ client, channelID }) => {
   try {
@@ -25,3 +26,9 @@ export const getChannelSheet = async ({ client, channelID }) => {
     return undefined;
   }
 };
+
+const driveClient = async function () {
+  const drive = google.drive({ version: "v3", auth: JwtClient() });
+  return drive;
+};
+export default driveClient;
