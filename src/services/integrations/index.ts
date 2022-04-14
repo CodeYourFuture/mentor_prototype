@@ -1,6 +1,5 @@
 require("dotenv").config();
 import slack from "../../clients/slack";
-var cron = require("node-cron");
 
 require("dotenv").config();
 

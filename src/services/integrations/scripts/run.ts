@@ -1,4 +1,4 @@
-import { integrations } from ".";
+import { integrations } from "..";
 
 (async () => {
   console.log("fetch integrations");
