@@ -4,7 +4,6 @@ export default gql`
   query GET_STUDENT($studentID: String!) {
     reporters: updates_aggregate(
       where: { student: { _eq: $studentID }, key: { _eq: "achievement" } }
-      distinct_on: reporter
     ) {
       nodes {
         reporter
@@ -16,14 +15,17 @@ export default gql`
       distinct_on: [key]
     ) {
       nodes {
+        key
+        value
+        timestamp
         reporter
       }
     }
     quick_ALL: updates_aggregate(
       where: { student: { _eq: $studentID }, key: { _eq: "achievement" } }
     ) {
-      nodes {
-        reporter
+      aggregate {
+        count
       }
     }
     quick_OVERACHIEVING: updates_aggregate(
@@ -33,8 +35,8 @@ export default gql`
         value: { _eq: "OVERACHIEVING" }
       }
     ) {
-      nodes {
-        reporter
+      aggregate {
+        count
       }
     }
     quick_CONCERN: updates_aggregate(
@@ -44,15 +46,16 @@ export default gql`
         value: { _eq: "CONCERN" }
       }
     ) {
-      nodes {
-        reporter
+      aggregate {
+        count
       }
     }
     concern_areas: updates_aggregate(
       where: { student: { _eq: $studentID }, key: { _eq: "concern" } }
     ) {
       nodes {
-        reporter
+        value
+        timestamp
       }
     }
   }

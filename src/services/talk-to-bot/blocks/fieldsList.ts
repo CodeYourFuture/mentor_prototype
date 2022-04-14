@@ -1,6 +1,6 @@
 export default ({ studentName, studentID, timestamp, data, schema }: any) => {
   const values = data.updates?.nodes;
-  const payload = { studentID, timestamp, studentName };
+  console.log(data.updates.nodes);
   return [
     {
       type: "header",
@@ -24,7 +24,13 @@ export default ({ studentName, studentID, timestamp, data, schema }: any) => {
       .map(({ key, label, default_value }) => {
         const dbVal = values?.find(({ key: k }) => k === key)?.value;
         const currentValue = dbVal || default_value;
-        const actionValue = JSON.stringify({ ...payload, key, currentValue });
+        const actionValue = JSON.stringify({
+          studentID,
+          timestamp,
+          studentName,
+          key,
+          currentValue,
+        });
         return {
           type: "section",
           text: {
