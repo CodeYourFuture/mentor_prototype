@@ -1,3 +1,2 @@
-export-to-sheets: node build/microservices/export-to-sheets.js
-integrations:  node build/microservices/integrations.js
-talk-to-bot: node build/microservices/talk-to-bot.js
+export-to-sheets: node build/services/export-to-sheets/scripts/cron.js
+talk-to-bot: node build/services/talk-to-bot.js
