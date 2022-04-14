@@ -61,17 +61,17 @@ export default async ({
         emoji: true,
       },
     },
-    ...(mentorBlocks.length
-      ? mentorBlocks
-      : [
-          {
-            type: "section",
-            text: {
-              type: "plain_text",
-              text: "No mentors found. Please specify a mentor channel.",
-              emoji: true,
-            },
-          },
-        ]),
+    // ...(mentorBlocks.length
+    //   ? mentorBlocks
+    //   : [
+    //       {
+    //         type: "section",
+    //         text: {
+    //           type: "plain_text",
+    //           text: "No mentors found. Please specify a mentor channel.",
+    //           emoji: true,
+    //         },
+    //       },
+    //     ]),
   ];
 };
