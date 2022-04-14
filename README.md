@@ -1,18 +1,6 @@
-# CYFBot
+# Mentor
 
-A Slackbot for tracking trainee data.
-
-## How to use CYFBot
-
-CYF bot allows mentors to update trainee information and review cohort progress.
-
-#### Update Trainee Information
-
-Send a DM To CYFBot with the @trainee_name.
-
-#### Review cohort progress
-
-Send a DM To CYFBot with the #cohort_channel_name.
+A platform for tracking trainee data.
 
 ## Dev Quickstart
 
@@ -56,3 +44,15 @@ SHEETS_PRIVATE_KEY="-----BEGIN PRIVATE KEY-----\nxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 ```bash
 yarn dev
 ```
+
+## Talk-to-Bot
+
+The talk-to-bot service allows mentors to update trainee information and review cohort progress.
+
+#### Update Trainee Information
+
+Send a DM To CYFBot with the @trainee_name.
+
+#### Review cohort progress
+
+Send a DM To CYFBot with the #cohort_channel_name.
