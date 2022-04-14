@@ -1,4 +1,5 @@
 {
+  "token": "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",
   "repos": [
     "GitHomeworkFixErrors",
     "bikes-for-refugees",
@@ -22,6 +23,7 @@
     "node-challenge-hotel-server",
     "SQL-Coursework-Week1",
     "SQL-Coursework-Week2",
-    "SQL-Coursework-Week3"
+    "SQL-Coursework-Week3",
+    "CYFBot"
   ]
 }

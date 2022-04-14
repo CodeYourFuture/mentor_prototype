@@ -71,6 +71,16 @@ export default ({ studentID, timestamp, studentName }: any) => {
           },
           value: actionValue,
         },
+        {
+          type: "button",
+          action_id: "REPORT_STATUS_CONCERN_MISSED_SESSION",
+          text: {
+            type: "plain_text",
+            text: "Missed a session",
+            emoji: true,
+          },
+          value: actionValue,
+        },
       ],
     },
     {

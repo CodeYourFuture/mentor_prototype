@@ -35,9 +35,9 @@ export default async ({ slack }) => {
         groupKey,
         memberKey: mentorEmail,
       });
-      console.log(`✅ ${mentorEmail}`);
+      console.log(`🔑 ${mentorEmail}`);
     } catch (e) {
-      console.log("adding", mentorEmail);
+      console.log(`🔑 ${mentorEmail}`);
       try {
         await service.members.insert({
           groupKey,
@@ -47,7 +47,7 @@ export default async ({ slack }) => {
           },
         });
       } catch (e) {
-        console.error(e);
+        // console.error(e);
       }
       // console.error(e);
     }

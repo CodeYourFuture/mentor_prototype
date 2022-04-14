@@ -1,17 +1,19 @@
 require("dotenv").config();
+import upsertIntegration from "../../queries/upsertIntegration.graphql";
 import slack from "../../clients/slack";
 
 require("dotenv").config();
 
-export type Response = {
-  key: string;
-  value: string | number | boolean;
-  favourite?: boolean;
-  sentiment?: "positive" | "negative" | "neutral";
-}[];
+export type IntegrationResponse = {
+  [key: string]: {
+    value: string | number | boolean;
+    favourite?: boolean;
+    sentiment?: "positive" | "caution" | "negative" | "neutral";
+  };
+};
 
 import database, { getSchema } from "../../clients/apollo";
-import getStudent from "../talk-to-bot/queries/getStudent.graphql";
+import getStudent from "../../queries/getStudent.graphql";
 import fs from "fs";
 
 const throttle = 2000;
@@ -31,17 +33,14 @@ const getAllMembers = async ({ client, channelID }) => {
   return allMembers;
 };
 
-const getIntegrationData = async ({ service, externalID }) => {
-  const integrationsDir = "./src/integrations";
-  const integrations = fs
-    .readdirSync(integrationsDir)
-    .map((file) => file.replace(".ts", ""));
+const getIntegrationData = async ({ service, externalID, group }) => {
+  const integrationsDir = "src/services/integrations/sources";
+  const integrations = fs.readdirSync(integrationsDir);
   if (!integrations.includes(service) || !externalID) return [];
-  const { default: integration } = require(`./integrations/${service}.ts`);
-  const integrationData = (await integration(externalID)).map(
-    ({ column, value }) => ({ column: `${service}_${column}`, value })
-  );
-  return integrationData || [];
+  // console.log(service, externalID);
+  const { default: integration } = require(`./sources/${service}`);
+  const integrationData = await integration(externalID, group);
+  return integrationData;
 };
 
 async function getChannel({ client, channel }) {
@@ -60,17 +59,62 @@ async function getChannel({ client, channel }) {
 
   //
   // Fetch data for all members of channel (filter out volunteers)
+  let cohortIntegrations = {};
+  await Promise.all(
+    cohortList
+      .filter((studentID) => !volunteerList.includes(studentID))
+      .map(async (studentID, i) => {
+        try {
+          await sleep(throttle * i);
+          const { profile } = await client.users.profile.get({
+            user: studentID,
+          });
 
+          console.log(i, "Processing", profile.real_name);
+          const { data } = await database.query({
+            query: getStudent,
+            variables: { studentID },
+            fetchPolicy: "network-only",
+          });
+
+          const integrationFields = [
+            ...(await Promise.all(
+              schema
+                .filter(({ integration }) => !!integration)
+                .map(async ({ key }) => {
+                  const dbVal = data.updates?.nodes?.find(
+                    ({ key: k }) => k === key
+                  )?.value;
+                  const externalID = dbVal || "";
+                  const integrationData = await getIntegrationData({
+                    service: key,
+                    externalID,
+                    group: undefined,
+                  });
+                  if (data) {
+                    if (!cohortIntegrations[key]) cohortIntegrations[key] = [];
+                    cohortIntegrations[key].push({
+                      trainee: studentID,
+                      data: integrationData,
+                    });
+                  }
+                })
+            )),
+          ].flat() as any;
+          return integrationFields;
+        } catch (e) {
+          console.error(e);
+          return {};
+        }
+      })
+  );
+
+  // Run integrations again but with classmates (for compariston)
   cohortList
     .filter((studentID) => !volunteerList.includes(studentID))
     .map(async (studentID, i) => {
       try {
         await sleep(throttle * i);
-        const { profile } = await client.users.profile.get({
-          user: studentID,
-        });
-
-        console.log(i, "Processing", profile.real_name);
         const { data } = await database.query({
           query: getStudent,
           variables: { studentID },
@@ -86,7 +130,25 @@ async function getChannel({ client, channel }) {
                   ({ key: k }) => k === key
                 )?.value;
                 const externalID = dbVal || "";
-                return getIntegrationData({ service: key, externalID }) || [];
+                if (!externalID) return;
+                const finalIntegrationsData = await getIntegrationData({
+                  service: key,
+                  externalID,
+                  group: cohortIntegrations[key].filter(
+                    ({ trainee, data }) => data?.length && trainee !== studentID
+                  ),
+                });
+                if (!finalIntegrationsData) return;
+                const variables = {
+                  team: process.env.TEAM_ID,
+                  student: studentID,
+                  key,
+                  value: JSON.stringify(finalIntegrationsData),
+                };
+                await database.mutate({
+                  mutation: upsertIntegration,
+                  variables,
+                });
               })
           )),
         ].flat() as any;
@@ -96,8 +158,6 @@ async function getChannel({ client, channel }) {
         return {};
       }
     });
-  // TODO; do post analysis per cohort (cohort variable)
-  // TODO: save to db
 }
 
 export const integrations = async () => {

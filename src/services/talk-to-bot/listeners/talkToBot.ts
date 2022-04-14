@@ -51,24 +51,46 @@ export default function (slack) {
       //
       // if the message doesn't start with an @student show the instructions
       let [studentID] = message?.text?.split(/(\s+)/) || [];
-      if (!studentID.startsWith("<@"))
-        return say(
-          "Mention a `@trainee` to record an update, mention a `#channel` to view a cohort data, or type `data` to view all data"
-        );
+      if (!studentID.startsWith("<@")) {
+        client.reactions.add({
+          channel: message.channel,
+          timestamp: message.ts,
+          name: "warning",
+        });
+        return say({
+          timestamp: message.ts,
+          text: "Mention a `@trainee` to record an update, mention a `#channel` to view a cohort data, or type `data` to view all data",
+        });
+      }
       //
       // if the message is a student, show the student
       studentID = studentID.replace("<@", "").replace(">", "");
       const isMentionedVolunteer = volunteerList.includes(studentID);
       if (isMentionedVolunteer) {
         const { profile } = await client.users.profile.get({ user: studentID });
-        return await say(`${profile.real_name} is not a trainee`);
+        console.log({ message });
+        client.reactions.add({
+          channel: message.channel,
+          timestamp: message.ts,
+          name: "warning",
+        });
+        return await say({
+          text: `${profile.real_name} is not a trainee`,
+          thread_ts: message.ts,
+        });
       }
       await mentionStudent({ say, client, studentID, timestamp });
     } catch (error) {
       if (error?.data?.error === "not_in_channel") {
-        return say(
-          `I am not a member of that Slack channel. I can only see channels you add me to.`
-        );
+        client.reactions.add({
+          channel: message.channel,
+          timestamp: message.ts,
+          name: "warning",
+        });
+        return say({
+          text: `I am not a member of that Slack channel. I can only see channels you add me to.`,
+          thread_ts: message.ts,
+        });
       }
       say(`Error: ${error?.data?.error || error?.message || "Unknown"}`);
       console.error(error);

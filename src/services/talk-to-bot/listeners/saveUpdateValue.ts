@@ -1,4 +1,4 @@
-import addRecord from "../queries/addRecord.graphql";
+import addRecord from "../../../queries/addRecord.graphql";
 import database from "../../../clients/apollo";
 import { studentHome } from "./mentionStudent";
 
@@ -20,7 +20,6 @@ export default function (slack) {
         const key = schemaItem.key;
         const team = body.team.id;
         const variables = { team, student: studentID, reporter, key, value };
-        console.log({ variables });
         await database.mutate({ mutation: addRecord, variables });
         await ack();
         const homeBlocks = await studentHome({

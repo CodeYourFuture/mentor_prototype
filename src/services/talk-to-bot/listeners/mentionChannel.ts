@@ -1,6 +1,6 @@
 import database, { getSchema } from "../../../clients/apollo";
-import getStudent from "../queries/getStudent.graphql";
-import getCheckInReporters from "../queries/getCheckInReporters.graphql";
+import getStudent from "../../../queries/getStudent.graphql";
+import getCheckInReporters from "../../../queries/getCheckInReporters.graphql";
 import { json2csvAsync } from "json-2-csv";
 import { google } from "googleapis";
 import fs from "fs";

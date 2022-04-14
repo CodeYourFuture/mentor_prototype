@@ -1,6 +1,6 @@
 import database, { getSchema } from "../../../clients/apollo";
 import { refreshSchemaList } from "./saveSchemaEdit";
-import deleteSchemaField from "../queries/deleteSchemaField.graphql";
+import deleteSchemaField from "../../../queries/deleteSchemaField.graphql";
 
 // When the user updates a schema field
 // save it to the schema table

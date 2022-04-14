@@ -1,5 +1,5 @@
 import database, { getSchema } from "../../../clients/apollo";
-import addSchemaField from "../queries/addSchemaField.graphql";
+import addSchemaField from "../../../queries/addSchemaField.graphql";
 import { getValuesFromForm, refreshSchemaList } from "./saveSchemaEdit";
 
 // When the user updates a schema field

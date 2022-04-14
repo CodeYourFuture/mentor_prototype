@@ -26,7 +26,7 @@ export const getChannelSheet = async ({ client, channelID }) => {
     const file = files.data.files[0];
     return file;
   } catch (e) {
-    console.error(e);
+    // console.error(e);
     return undefined;
   }
 };

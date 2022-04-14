@@ -1,6 +1,6 @@
 require("dotenv").config();
 import database from "../../../clients/apollo";
-import getStudent from "../../talk-to-bot/queries/getStudent.graphql";
+import getStudent from "../../../queries/getStudent.graphql";
 import parseIntegration from "./parseIntegrationData";
 
 function getNumberOfDays(start) {
@@ -51,13 +51,16 @@ export default async ({ studentID, client, allMessages, schema }) => {
               ({ key: k }) => k === key
             )?.value;
             const value = dbVal || default_value || "";
-            if (integration) {
+            if (integration && dbVal) {
               return (
-                parseIntegration({
-                  key,
-                  label,
-                  value,
-                }) || []
+                [
+                  { column: label, value },
+                  ...(await parseIntegration({
+                    team: process.env.TEAM_ID,
+                    student: studentID,
+                    key,
+                  })),
+                ] || []
               );
             } else {
               return await [{ column: label, value }];

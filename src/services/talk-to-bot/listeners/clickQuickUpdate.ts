@@ -1,4 +1,4 @@
-import addRecord from "../queries/addRecord.graphql";
+import addRecord from "../../../queries/addRecord.graphql";
 import database from "../../../clients/apollo";
 import concernButtons from "../blocks/concernButtons";
 
@@ -10,7 +10,13 @@ const REACTION_MAP = {
   OVERACHIEVING: { emoji: "sparkles" },
   CONCERN: {
     emoji: "exclamation",
-    options: ["Technical ability", "Personal issues", "Motivation", "Teamwork"],
+    options: [
+      "Technical ability",
+      "Personal issues",
+      "Motivation",
+      "Teamwork",
+      "Missed a session",
+    ],
   },
 };
 
@@ -58,7 +64,7 @@ export default function (slack) {
   });
 
   //  When the user taps one of the concern buttons
-  ["TECHNICAL", "MOTIVATION", "LANGUAGE", "PERSONAL"].forEach(
+  ["TECHNICAL", "MOTIVATION", "LANGUAGE", "PERSONAL", "MISSED_SESSION"].forEach(
     async (status) => {
       await slack.action(
         `REPORT_STATUS_CONCERN_${status}`,

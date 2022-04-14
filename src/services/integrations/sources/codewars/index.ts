@@ -1,6 +1,11 @@
-import { IntegrationType } from "../github";
+import { IntegrationResponse } from "../..";
 
-const Integration = (integrationID) => {
+// An integration is a FUNCTION which runs PER TRAINEE
+export default async function (
+  id: string, // The trainee's ID for this integration service
+  group?: IntegrationResponse[] // Data of other trainees (for comparison)
+): Promise<IntegrationResponse> {
+  //
   // /** Codewars has a public API; docs here:
   //  * https://dev.codewars.com/#introduction
   //  */
@@ -86,6 +91,5 @@ const Integration = (integrationID) => {
   //     return [];
   //   }
   // }
-};
-
-export default Integration as IntegrationType;
+  return;
+}

@@ -1,6 +1,6 @@
 import ApolloClient from "apollo-boost";
 import "cross-fetch/polyfill";
-import getSchemaQuery from "../services/talk-to-bot/queries/getSchema.graphql";
+import getSchemaQuery from "../queries/getSchema.graphql";
 
 const database = new ApolloClient({
   uri: process.env.HASURA_URI,
