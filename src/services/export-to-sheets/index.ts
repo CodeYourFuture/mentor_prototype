@@ -43,7 +43,9 @@ async function getChannelData({ client, channel }) {
 export default async () => {
   // return await adminapi();
   const drive = await driveClient();
-  for (const channel of await getSlackChannels()) {
+
+  const bot = await slack.client.auth.test();
+  for (const channel of await getSlackChannels({ userID: bot.user_id })) {
     console.log("\n✨", channel.name);
     const csv = await getChannelData({ client: slack.client, channel });
     const mimeType = "application/vnd.google-apps.spreadsheet";

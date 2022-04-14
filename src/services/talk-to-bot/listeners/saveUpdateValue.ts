@@ -25,6 +25,7 @@ export default function (slack) {
         studentName,
         studentID,
         timestamp,
+        slackClient: client,
       });
       await client.chat.update({
         channel: channelID,

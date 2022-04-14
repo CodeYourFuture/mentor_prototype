@@ -20,7 +20,8 @@ export default function (slack) {
       `REPORT_STATUS_${status}`,
       async ({ ack, body, say, client }: any) => {
         await ack();
-        const { studentID, initialTimestamp } =
+        console.log("clicked", status);
+        const { studentID, timestamp } =
           JSON.parse(body.actions?.[0]?.value) || {};
         client.chat.delete({
           channel: body.channel.id,
@@ -28,7 +29,7 @@ export default function (slack) {
         });
         client.reactions.add({
           channel: body.channel.id,
-          timestamp: initialTimestamp,
+          timestamp: timestamp,
           name: REACTION_MAP[status].emoji,
         });
         database.mutate({
@@ -46,11 +47,11 @@ export default function (slack) {
           const studentName = profile.profile.display_name;
           const params = {
             studentID: studentID,
-            timestamp: initialTimestamp,
+            timestamp: timestamp,
             studentName,
           };
           const blocks = concernButtons(params);
-          await say({ blocks, text: "", thread_ts: initialTimestamp });
+          await say({ blocks, text: "", thread_ts: timestamp });
         }
       }
     );

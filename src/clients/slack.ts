@@ -8,10 +8,9 @@ const slack = new App({
 });
 export default slack;
 
-export const getSlackChannels = async () => {
-  const auth = await slack.client.auth.test();
+export const getSlackChannels = async ({ userID }) => {
   const { channels } = await slack.client.users.conversations({
-    user: auth.user_id,
+    user: userID,
     types: "public_channel,private_channel",
   });
   return (

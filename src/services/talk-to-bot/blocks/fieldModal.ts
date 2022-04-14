@@ -7,23 +7,23 @@ export default ({
   channelID,
   data,
 }) => {
-  console.log({
-    studentID,
-    timestamp,
-    schemaItem,
-    currentValue,
-    studentName,
-    channelID,
-    data,
-  });
+  // console.log({
+  //   studentID,
+  //   timestamp,
+  //   schemaItem,
+  //   currentValue,
+  //   studentName,
+  //   channelID,
+  //   data,
+  // });
   return {
     title: {
-      type: 'plain_text',
+      type: "plain_text",
       text: `${studentName}`,
     },
     submit: {
-      type: 'plain_text',
-      text: 'Submit',
+      type: "plain_text",
+      text: "Submit",
     },
     private_metadata: JSON.stringify({
       schemaItem,
@@ -35,53 +35,53 @@ export default ({
     }),
     blocks: [
       {
-        type: 'input',
-        block_id: 'view',
+        type: "input",
+        block_id: "view",
         element: {
-          ...(schemaItem.type === 'Text'
+          ...(schemaItem.type === "Text"
             ? {
-                type: 'plain_text_input',
-                action_id: 'input',
+                type: "plain_text_input",
+                action_id: "input",
                 ...(currentValue ? { initial_value: currentValue } : {}),
                 placeholder: {
-                  type: 'plain_text',
-                  text: schemaItem.description || 'Not set',
+                  type: "plain_text",
+                  text: schemaItem.description || "Not set",
                 },
               }
             : {
-                type: 'static_select',
+                type: "static_select",
                 action_id: `value`,
                 ...(currentValue
                   ? {
                       initial_option: {
-                        text: { type: 'plain_text', text: currentValue },
+                        text: { type: "plain_text", text: currentValue },
                         value: currentValue,
                       },
                     }
                   : {}),
                 placeholder: {
-                  type: 'plain_text',
-                  text: currentValue || 'No',
+                  type: "plain_text",
+                  text: currentValue || "No",
                 },
                 options: [
                   {
-                    text: { type: 'plain_text', text: 'Yes' },
-                    value: 'Yes',
+                    text: { type: "plain_text", text: "Yes" },
+                    value: "Yes",
                   },
                   {
-                    text: { type: 'plain_text', text: 'No' },
-                    value: 'No',
+                    text: { type: "plain_text", text: "No" },
+                    value: "No",
                   },
                 ],
               }),
         },
         label: {
-          type: 'plain_text',
+          type: "plain_text",
           text: `${schemaItem.label}`,
         },
       },
     ],
-    type: 'modal',
-    callback_id: 'SAVE_UPDATE_VALUE',
+    type: "modal",
+    callback_id: "SAVE_UPDATE_VALUE",
   };
 };

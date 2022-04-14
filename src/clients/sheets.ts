@@ -7,12 +7,14 @@ export const JwtClient = function () {
     "https://www.googleapis.com/auth/admin.directory.user",
     "https://www.googleapis.com/auth/admin.directory.group",
   ];
-  return new google.auth.GoogleAuth({
-    keyFilename: "./src/clients/cyfbot-3ff286a4571b.json",
-    // keyFile: "./src/clients/cyfbot-3ff286a4571b.json",
-    scopes: scope,
-    projectId: "cyfbot",
-  });
+
+  const JwtClient = new google.auth.JWT(
+    EMAIL,
+    null,
+    KEY.replace(/\\n/g, "\n"),
+    scope
+  );
+  return JwtClient;
 };
 
 export const getChannelSheet = async ({ client, channelID }) => {
@@ -20,9 +22,11 @@ export const getChannelSheet = async ({ client, channelID }) => {
     const { channel } = await client.conversations.info({ channel: channelID });
     const drive = await driveClient();
     const files = await drive.files.list({ q: `name='${channel.name}'` });
+    // console.log({ files });
     const file = files.data.files[0];
     return file;
-  } catch {
+  } catch (e) {
+    console.error(e);
     return undefined;
   }
 };

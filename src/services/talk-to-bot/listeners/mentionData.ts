@@ -8,7 +8,9 @@ import slack, { getSlackChannels } from "../../../clients/slack";
 
 export default async function ({ say, timestamp, client }) {
   const schema = await getSchema();
-  const channels = await getSlackChannels();
+
+  const bot = await slack.client.auth.test();
+  const channels = await getSlackChannels({ userID: bot.user_id });
   const mentors = [];
   await say({
     blocks: [
