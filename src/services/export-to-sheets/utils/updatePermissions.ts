@@ -13,7 +13,9 @@ export default async ({ slack }) => {
       mentorList.map(async (mentorID) => {
         const { profile } = await slack.users.profile.get({ user: mentorID });
         // console.log({ profile });
-        return profile.email || profile[process.env.EMAIL_FIELD_ID];
+        return (
+          profile.email || profile.fields?.[process.env.EMAIL_FIELD_ID]?.value
+        );
       })
     )) || []
   ).filter(Boolean);

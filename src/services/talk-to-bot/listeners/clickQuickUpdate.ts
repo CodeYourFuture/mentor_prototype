@@ -50,7 +50,6 @@ export default function (slack) {
         });
         if (status === "CONCERN") {
           const profile = await client.users.profile.get({ user: studentID });
-          console.log({ profile });
           const studentName = profile.profile.display_name;
           const params = {
             studentID: studentID,
