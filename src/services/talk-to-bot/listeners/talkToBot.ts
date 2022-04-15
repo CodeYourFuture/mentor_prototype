@@ -1,13 +1,49 @@
+import database from "../../../clients/apollo";
 import mentionChannel from "./mentionChannel";
 import mentionConfig from "./mentionConfig";
 import mentionData from "./mentionData";
 import mentionStudent from "./mentionStudent";
+import upsertIntegrationConfig from "../../../queries/upsertIntegrationConfig.graphql";
 
 // When the user sends a DM to CYFBot.
 
 export default function (slack) {
+  const uploadFile = async ({ file, onSuccess }) => {
+    if (!file.name.endsWith(".config.json")) return;
+    const integration = file.name.replace(".config.json", "");
+    const variables = {
+      team: process.env.TEAM_ID,
+      integration,
+      value: file.id,
+    };
+    await database.mutate({
+      mutation: upsertIntegrationConfig,
+      variables,
+    });
+    onSuccess(integration);
+    // upload the file id url to the database and respond with success message
+  };
   slack.message(async ({ message, say, client, body }: any) => {
+    if (!message) return;
     try {
+      if (message.files?.length)
+        return await uploadFile({
+          file: message.files[0],
+          onSuccess: async (integrationName) => {
+            await client.reactions.add({
+              channel: message.channel,
+              timestamp: message.ts,
+              name: "white_check_mark",
+            });
+            return say({
+              thread_ts: message.ts,
+              text:
+                "Config updated for `" +
+                integrationName +
+                "` integration. (Do not delete this message)",
+            });
+          },
+        });
       //
       // Ignore edits and deletes
       const { user: reporterID, ts: timestamp } = message;
@@ -25,9 +61,10 @@ export default function (slack) {
           channel: accessChannelID,
         });
         const accessChannelName = cohortInfo.name;
-        return await say(
-          `To use CYFbot you must be part of the ${accessChannelName} channel`
-        );
+        return say({
+          thread_ts: message.ts,
+          text: "To use Mentor you must be part of the ${accessChannelName} channel",
+        });
       }
       // help & status
       if (message.text === "data")

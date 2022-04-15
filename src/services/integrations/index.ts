@@ -1,8 +1,7 @@
 require("dotenv").config();
 import upsertIntegration from "../../queries/upsertIntegration.graphql";
+import getIntegrationConfig from "../../queries/getIntegrationConfig.graphql";
 import slack from "../../clients/slack";
-
-require("dotenv").config();
 
 export type IntegrationResponse = {
   [key: string]: {
@@ -16,7 +15,7 @@ import database, { getSchema } from "../../clients/apollo";
 import getStudent from "../../queries/getStudent.graphql";
 import fs from "fs";
 
-const throttle = 2000;
+const throttle = 4000;
 const getAllMembers = async ({ client, channelID }) => {
   let allMembers = [];
   const fetchSlice = async ({ next_cursor }) => {
@@ -39,125 +38,131 @@ const getIntegrationData = async ({ service, externalID, group }) => {
   if (!integrations.includes(service) || !externalID) return [];
   // console.log(service, externalID);
   const { default: integration } = require(`./sources/${service}`);
-  const integrationData = await integration(externalID, group);
+
+  const integrationConfig = await database.mutate({
+    mutation: getIntegrationConfig,
+    variables: {
+      teamID: process.env.TEAM_ID,
+      integration: service,
+    },
+  });
+  const configFileID = integrationConfig?.data?.integrations_config[0]?.value;
+  const fileinfo = !configFileID
+    ? undefined
+    : await slack.client.files.info({
+        file: configFileID,
+      });
+  const config = !fileinfo?.content ? {} : JSON.parse(fileinfo.content);
+  const integrationData = await integration(config, externalID, group || []);
   return integrationData;
 };
 
 async function getChannel({ client, channel }) {
   const channelID = channel.id;
+  console.log(`🚚 #${channel.name}`);
 
   // Check bot has access to channel
   await client.conversations.history({ channel: channelID, limit: 1 });
   const schema = await getSchema();
+  const integrationFields = schema.filter(({ integration }) => !!integration);
   const cohortList = await getAllMembers({ client, channelID });
   const { members: volunteerList } = await client.conversations.members({
     channel: process.env.ACCESS_CHANNEL_ID,
   });
-  //
 
   const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
   //
   // Fetch data for all members of channel (filter out volunteers)
   let cohortIntegrations = {};
-  await Promise.all(
-    cohortList
-      .filter((studentID) => !volunteerList.includes(studentID))
-      .map(async (studentID, i) => {
-        try {
-          await sleep(throttle * i);
-          const { profile } = await client.users.profile.get({
-            user: studentID,
-          });
-
-          console.log(i, "Processing", profile.real_name);
-          const { data } = await database.query({
-            query: getStudent,
-            variables: { studentID },
-            fetchPolicy: "network-only",
-          });
-
-          const integrationFields = [
-            ...(await Promise.all(
-              schema
-                .filter(({ integration }) => !!integration)
-                .map(async ({ key }) => {
-                  const dbVal = data.updates?.nodes?.find(
-                    ({ key: k }) => k === key
-                  )?.value;
-                  const externalID = dbVal || "";
-                  const integrationData = await getIntegrationData({
-                    service: key,
-                    externalID,
-                    group: undefined,
-                  });
-                  if (data) {
-                    if (!cohortIntegrations[key]) cohortIntegrations[key] = [];
-                    cohortIntegrations[key].push({
-                      trainee: studentID,
-                      data: integrationData,
-                    });
-                  }
-                })
-            )),
-          ].flat() as any;
-          return integrationFields;
-        } catch (e) {
-          console.error(e);
-          return {};
-        }
-      })
+  const trainees = cohortList.filter(
+    (studentID) => !volunteerList.includes(studentID)
   );
+  let i = 0;
+  for (const studentID of trainees) {
+    try {
+      await sleep(throttle * i);
+      i++;
+      const { profile } = await client.users.profile.get({
+        user: studentID,
+      });
+      console.log("👤 User", profile.real_name);
 
-  // Run integrations again but with classmates (for compariston)
-  cohortList
-    .filter((studentID) => !volunteerList.includes(studentID))
-    .map(async (studentID, i) => {
-      try {
-        await sleep(throttle * i);
-        const { data } = await database.query({
-          query: getStudent,
-          variables: { studentID },
-          fetchPolicy: "network-only",
+      const { data } = await database.query({
+        query: getStudent,
+        variables: { studentID },
+        fetchPolicy: "network-only",
+      });
+
+      for (const { key } of integrationFields) {
+        const dbVal = data.updates?.nodes?.find(
+          ({ key: k }) => k === key
+        )?.value;
+        const externalID = dbVal || "";
+        const integrationData = await getIntegrationData({
+          service: key,
+          externalID,
+          group: undefined,
         });
-
-        const integrationFields = [
-          ...(await Promise.all(
-            schema
-              .filter(({ integration }) => !!integration)
-              .map(async ({ key }) => {
-                const dbVal = data.updates?.nodes?.find(
-                  ({ key: k }) => k === key
-                )?.value;
-                const externalID = dbVal || "";
-                if (!externalID) return;
-                const finalIntegrationsData = await getIntegrationData({
-                  service: key,
-                  externalID,
-                  group: cohortIntegrations[key].filter(
-                    ({ trainee, data }) => data?.length && trainee !== studentID
-                  ),
-                });
-                if (!finalIntegrationsData) return;
-                const variables = {
-                  team: process.env.TEAM_ID,
-                  student: studentID,
-                  key,
-                  value: JSON.stringify(finalIntegrationsData),
-                };
-                await database.mutate({
-                  mutation: upsertIntegration,
-                  variables,
-                });
-              })
-          )),
-        ].flat() as any;
-        return integrationFields;
-      } catch (e) {
-        console.error(e);
-        return {};
+        if (data) {
+          if (!cohortIntegrations[key]) cohortIntegrations[key] = [];
+          cohortIntegrations[key].push({
+            trainee: studentID,
+            data: integrationData,
+          });
+        }
       }
-    });
+    } catch (e) {
+      console.error(e);
+    }
+  }
+  i = 0;
+  for (const studentID of trainees) {
+    try {
+      const { profile } = await client.users.profile.get({
+        user: studentID,
+      });
+      console.log("👤 Integrations", profile.real_name);
+      await sleep(throttle * i);
+      i++;
+      const { data } = await database.query({
+        query: getStudent,
+        variables: { studentID },
+        fetchPolicy: "network-only",
+      });
+
+      for (const { key } of integrationFields) {
+        const dbVal = data.updates?.nodes?.find(
+          ({ key: k }) => k === key
+        )?.value;
+        const externalID = dbVal || "";
+        if (!externalID) break;
+        console.log("🔗", key);
+        const finalIntegrationsData = await getIntegrationData({
+          service: key,
+          externalID,
+          group: cohortIntegrations[key].filter(
+            ({ trainee, data }) => data?.length && trainee !== studentID
+          ),
+        });
+        if (finalIntegrationsData) {
+          const variables = {
+            team: process.env.TEAM_ID,
+            student: studentID,
+            key,
+            value: JSON.stringify(finalIntegrationsData),
+          };
+          await database.mutate({
+            mutation: upsertIntegration,
+            variables,
+          });
+        }
+      }
+    } catch (e) {
+      console.error(e);
+      return {};
+    }
+  }
 }
 
 export const integrations = async () => {

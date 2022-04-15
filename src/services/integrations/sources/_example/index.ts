@@ -6,6 +6,7 @@ import { IntegrationResponse } from "../..";
 
 // An integration is a FUNCTION which runs PER TRAINEE
 export default async function (
+  config, // Provided by the user (optional)
   id: string, // The trainee's ID for this integration service
   group?: IntegrationResponse[] // Data of other trainees for comparison (optional)
 ): Promise<IntegrationResponse> {

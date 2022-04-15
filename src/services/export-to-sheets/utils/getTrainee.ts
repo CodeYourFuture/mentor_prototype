@@ -52,6 +52,7 @@ export default async ({ studentID, client, allMessages, schema }) => {
             )?.value;
             const value = dbVal || default_value || "";
             if (integration && dbVal) {
+              // TODO, distinguish between favourite (main sheet) - and other + id (subsequent sheet)
               return (
                 [
                   { column: label, value },
