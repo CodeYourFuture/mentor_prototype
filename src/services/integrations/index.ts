@@ -173,6 +173,7 @@ export const integrations = async () => {
   const { channels } = await slack.client.users.conversations({
     user: auth.user_id,
   });
+  console.log({ channels });
   for (const channel of channels.filter(
     (channel) => channel.id !== process.env.ACCESS_CHANNEL_ID
   )) {
