@@ -31,7 +31,7 @@ export default async ({ studentID, timestamp, slackClient }: any) => {
             text: !file?.id ? "⚠️" : "🔍",
             emoji: true,
           },
-          url: `https://drive.google.com/file/u/0/d/${file?.id}/preview`,
+          url: `https://drive.google.com/file/u/0/d/${file?.id}/template/preview`,
         },
       };
     })

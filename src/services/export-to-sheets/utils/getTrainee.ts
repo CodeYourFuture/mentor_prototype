@@ -12,6 +12,7 @@ function getNumberOfDays(start) {
 }
 
 export default async ({ studentID, client, allMessages, schema }) => {
+  if (!studentID) return null;
   try {
     const { profile } = await client.users.profile.get({
       user: studentID,
@@ -41,7 +42,6 @@ export default async ({ studentID, client, allMessages, schema }) => {
         .filter(({ timestamp }) => getNumberOfDays(timestamp) < 30)
         .map(({ value }) => `${value}`.toLowerCase())
         .join(", ") || "";
-    if (!data.quick_ALL.aggregate.count) return null;
 
     const schemaFields = (
       [
@@ -52,10 +52,9 @@ export default async ({ studentID, client, allMessages, schema }) => {
             )?.value;
             const value = dbVal || default_value || "";
             if (integration && dbVal) {
-              // TODO, distinguish between favourite (main sheet) - and other + id (subsequent sheet)
               return (
                 [
-                  { column: label, value },
+                  { column: label, value: { value, integration: key } },
                   ...(await parseIntegration({
                     team: process.env.TEAM_ID,
                     student: studentID,
@@ -64,7 +63,12 @@ export default async ({ studentID, client, allMessages, schema }) => {
                 ] || []
               );
             } else {
-              return await [{ column: label, value }];
+              return await [
+                {
+                  column: label,
+                  value: { value, integration: integration ? key : false },
+                },
+              ];
             }
           })
         )),
@@ -72,21 +76,25 @@ export default async ({ studentID, client, allMessages, schema }) => {
     ).reduce((acc, { column, value }) => ({ ...acc, [column]: value }), {});
     console.log("👤", profile.real_name);
     return {
-      Trainee: profile.real_name,
-      Mentors: reporters.join(", "),
-      "Check-ins": data.quick_ALL.aggregate.count,
-      Concerns: data.quick_CONCERN.aggregate.count,
-      "Recent concerns": concern_areas,
+      Trainee: { value: profile.real_name },
+      Mentors: { value: reporters.join(", ") },
+      "Check-ins": { value: data.quick_ALL.aggregate.count },
+      Concerns: { value: data.quick_CONCERN.aggregate.count },
+      "Recent concerns": { value: concern_areas },
       Overachieving: !data.quick_OVERACHIEVING.aggregate.count
-        ? "0%"
-        : `${
-            (data.quick_OVERACHIEVING.aggregate.count /
-              data.quick_ALL.aggregate.count) *
-            100
-          }%`,
-      "Slack Messages": allMessages.filter((m) => m.user === studentID).length,
+        ? { value: "0%" }
+        : {
+            value: `${
+              (data.quick_OVERACHIEVING.aggregate.count /
+                data.quick_ALL.aggregate.count) *
+              100
+            }%`,
+          },
+      "Slack Messages": {
+        value: allMessages.filter((m) => m.user === studentID).length,
+      },
       ...schemaFields,
-      "Student ID": studentID,
+      "Student ID": { value: studentID },
     };
   } catch (e) {
     console.error(e);

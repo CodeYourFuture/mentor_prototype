@@ -18,7 +18,7 @@ export default async function ({ say, client, channelID, timestamp }) {
         thread_ts: timestamp,
       });
     }
-    const url = `https://drive.google.com/file/u/0/d/${file.id}/preview`;
+    const url = `https://drive.google.com/file/u/0/d/${file.id}/template/preview`;
     await say({
       text: url,
       thread_ts: timestamp,

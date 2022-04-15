@@ -12,13 +12,16 @@ export default async ({ team, student, key }) => {
   if (!integrations.length) return [];
   const allContributionsData = integrations
     .map(({ value }) => {
-      const json = JSON.parse(value);
-      const columns = Object.entries(json).map(([column, value]: any) => {
-        return { column: `${key}_${column}`, value: value.value };
-      });
-      return columns;
+      try {
+        const json = JSON.parse(value);
+        const columns = Object.entries(json).map(([column, value]: any) => {
+          return { column: `${key}_${column}`, value: value };
+        });
+        return columns;
+      } catch (e) {
+        return [];
+      }
     })
     .flat();
-  console.log(allContributionsData);
   return allContributionsData;
 };

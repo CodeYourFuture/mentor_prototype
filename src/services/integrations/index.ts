@@ -15,7 +15,7 @@ import database, { getSchema } from "../../clients/apollo";
 import getStudent from "../../queries/getStudent.graphql";
 import fs from "fs";
 
-const throttle = 4000;
+const throttle = 3000;
 const getAllMembers = async ({ client, channelID }) => {
   let allMembers = [];
   const fetchSlice = async ({ next_cursor }) => {
@@ -36,7 +36,6 @@ const getIntegrationData = async ({ service, externalID, group }) => {
   const integrationsDir = "src/services/integrations/sources";
   const integrations = fs.readdirSync(integrationsDir);
   if (!integrations.includes(service) || !externalID) return [];
-  // console.log(service, externalID);
   const { default: integration } = require(`./sources/${service}`);
 
   const integrationConfig = await database.mutate({
@@ -53,8 +52,12 @@ const getIntegrationData = async ({ service, externalID, group }) => {
         file: configFileID,
       });
   const config = !fileinfo?.content ? {} : JSON.parse(fileinfo.content);
-  const integrationData = await integration(config, externalID, group || []);
-  return integrationData;
+  const integrationData = await integration(config, externalID, group || {});
+  if (!integrationData) return {};
+  return Object.entries(integrationData).reduce((acc, [key, value]) => {
+    acc[key] = { ...(value as any), integration: service };
+    return acc;
+  }, {});
 };
 
 async function getChannel({ client, channel }) {
@@ -95,10 +98,11 @@ async function getChannel({ client, channel }) {
       });
 
       for (const { key } of integrationFields) {
-        const dbVal = data.updates?.nodes?.find(
+        const externalID = data.updates?.nodes?.find(
           ({ key: k }) => k === key
         )?.value;
-        const externalID = dbVal || "";
+        if (!externalID) continue;
+        console.log("🔗", key, externalID);
         const integrationData = await getIntegrationData({
           service: key,
           externalID,
@@ -132,12 +136,11 @@ async function getChannel({ client, channel }) {
       });
 
       for (const { key } of integrationFields) {
-        const dbVal = data.updates?.nodes?.find(
+        const externalID = data.updates?.nodes?.find(
           ({ key: k }) => k === key
         )?.value;
-        const externalID = dbVal || "";
-        if (!externalID) break;
-        console.log("🔗", key);
+        if (!externalID) continue;
+        console.log("🔗", key, externalID);
         const finalIntegrationsData = await getIntegrationData({
           service: key,
           externalID,
