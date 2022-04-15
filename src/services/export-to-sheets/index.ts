@@ -55,7 +55,10 @@ export default async () => {
     //   client: drive,
     //   channelID: channel.id,
     // });
-    const requestBody = { name: `${channel.name}`, mimeType };
+    const requestBody = {
+      name: `${channel.name} (updated ${new Date().toISOString()})`,
+      mimeType,
+    };
     const media = { mimeType: "text/csv", body: "" };
     const fields = "id, webViewLink, webContentLink";
     const permissionBody = {

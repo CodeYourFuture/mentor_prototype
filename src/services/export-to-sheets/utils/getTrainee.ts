@@ -75,26 +75,37 @@ export default async ({ studentID, client, allMessages, schema }) => {
       ].flat() as any
     ).reduce((acc, { column, value }) => ({ ...acc, [column]: value }), {});
     console.log("👤", profile.real_name);
+    const percentOver =
+      (data.quick_OVERACHIEVING.aggregate.count /
+        data.quick_ALL.aggregate.count) *
+      100;
     return {
       Trainee: { value: profile.real_name },
       Mentors: { value: reporters.join(", ") },
       "Check-ins": { value: data.quick_ALL.aggregate.count },
-      Concerns: { value: data.quick_CONCERN.aggregate.count },
-      "Recent concerns": { value: concern_areas },
+      Concerns: {
+        value: data.quick_CONCERN.aggregate.count,
+      },
+      "Recent concerns": {
+        value: concern_areas,
+        sentiment: concern_areas?.length ? "caution" : "neutral",
+      },
       Overachieving: !data.quick_OVERACHIEVING.aggregate.count
         ? { value: "0%" }
+        : percentOver > 10
+        ? {
+            sentiment: "positive",
+            value: `${percentOver}%`,
+          }
         : {
-            value: `${
-              (data.quick_OVERACHIEVING.aggregate.count /
-                data.quick_ALL.aggregate.count) *
-              100
-            }%`,
+            sentiment: "neutral",
+            value: `${percentOver}%`,
           },
       "Slack Messages": {
         value: allMessages.filter((m) => m.user === studentID).length,
       },
       ...schemaFields,
-      "Student ID": { value: studentID },
+      "Mentorship ID": { value: studentID },
     };
   } catch (e) {
     console.error(e);
