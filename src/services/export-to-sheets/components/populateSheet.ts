@@ -31,7 +31,9 @@ export default async ({ doc, data }: { doc: GoogleSpreadsheet; data: any }) => {
     rowCount: data.length + 1,
     columnCount: overviewHeaderValues.length,
   });
-  await overview.updateProperties({ title: "Overview" });
+  await overview.updateProperties({
+    title: `Overview (updated ${new Date().toISOString()})`,
+  });
   await overview.setHeaderRow(overviewHeaderValues.filter(onlyUnique));
   for (const trainee of data) {
     const row = overviewHeaderValues.reduce((acc: any, key: string) => {

@@ -28,7 +28,7 @@ export default async () => {
     // create new sheet
     const newFile = await drive.files.create({
       requestBody: {
-        name: `${channel.name} (updated ${new Date().toISOString()})`,
+        name: `${channel.name}`,
         mimeType: "application/vnd.google-apps.spreadsheet",
       },
       media: { mimeType: "text/csv", body: "" },
