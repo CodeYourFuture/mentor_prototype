@@ -17,7 +17,8 @@ import fs from "fs";
 import getTraineesInTeamGraphql from "../../queries/getTraineesInTeam.graphql";
 import { sleep } from "../../utils/methods";
 
-const throttle = 2000;
+const THROTTLE = 2000;
+
 const getAllMembers = async ({ client, channelID }) => {
   let allMembers = [];
   const fetchSlice = async ({ next_cursor }) => {
@@ -117,12 +118,7 @@ async function getChannel({ client, channel }) {
   );
   for (const studentID of trainees) {
     try {
-      await sleep(throttle);
-      const { profile } = await client.users.profile.get({
-        user: studentID,
-      });
-      console.log("👤", profile.real_name);
-
+      await sleep(THROTTLE);
       const { data } = await database.query({
         query: getStudent,
         variables: { studentID },
@@ -153,7 +149,7 @@ async function getChannel({ client, channel }) {
   console.log("⏳ Process Integrations");
   for (const studentID of trainees) {
     try {
-      await sleep(throttle);
+      await sleep(THROTTLE);
       const { data } = await database.query({
         query: getStudent,
         variables: { studentID },

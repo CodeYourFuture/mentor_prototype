@@ -12,7 +12,7 @@ import populateSheet from "./components/populateSheet";
 import { sleep } from "../../utils/methods";
 import getTraineesInChannel from "../../utils/traineesInChannel";
 
-const THROTTLE = 7200;
+const THROTTLE = 1000; // hasura
 
 // For each channel
 export default async () => {

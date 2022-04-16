@@ -2,6 +2,7 @@ require("dotenv").config();
 import { GoogleSpreadsheet } from "google-spreadsheet";
 import { sleep } from "../../../utils/methods";
 import { colours } from "../../../utils/styles";
+const THROTTLE = 500; // sheets
 
 function onlyUnique(value, index, self) {
   return self.indexOf(value) === index;
@@ -17,11 +18,9 @@ export default async ({ doc, data }: { doc: GoogleSpreadsheet; data: any }) => {
 
   // overview
   const overview = doc.sheetsByIndex[0];
-  let throttle = 500;
   let overviewHeaderValues = [];
   if (!data?.length) throw new Error("No data to export");
   for (const trainee of data) {
-    await sleep(throttle);
     const additionalValues = Object.entries(trainee)
       .filter(([key, value]: any) => !value?.integration || value.favourite)
       .map(([key]) => key);
@@ -39,10 +38,11 @@ export default async ({ doc, data }: { doc: GoogleSpreadsheet; data: any }) => {
       return acc;
     }, {});
     await overview.addRow(row);
+    await sleep(THROTTLE);
   }
 
+  // apply styling
   await overview.loadCells();
-
   data.forEach((_, y) => {
     overviewHeaderValues.forEach((_, x) => {
       try {
@@ -65,7 +65,6 @@ export default async ({ doc, data }: { doc: GoogleSpreadsheet; data: any }) => {
     .filter(Boolean)
     .filter(onlyUnique);
   for (const integration of integrations) {
-    await sleep(throttle);
     let integrationHeaderValues = [];
     for (const trainee of data) {
       const additionalValues = Object.entries(trainee)
@@ -91,6 +90,7 @@ export default async ({ doc, data }: { doc: GoogleSpreadsheet; data: any }) => {
         return acc;
       }, {});
       await newSheet.addRow(row);
+      await sleep(THROTTLE);
     }
   }
 };
