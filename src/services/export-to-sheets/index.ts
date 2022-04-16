@@ -12,6 +12,8 @@ import populateSheet from "./components/populateSheet";
 import { sleep } from "../../utils/methods";
 import getTraineesInChannel from "../../utils/traineesInChannel";
 
+const THROTTLE = 7200;
+
 // For each channel
 export default async () => {
   const drive = await driveClient();
@@ -43,7 +45,7 @@ export default async () => {
         schema,
       });
       if (trainee) data.push(trainee);
-      await sleep(4000);
+      await sleep(THROTTLE);
     }
     await populateSheet({ doc, data });
 

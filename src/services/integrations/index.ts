@@ -133,11 +133,7 @@ async function getChannel({ client, channel }) {
         const externalID = data.updates?.nodes?.find(
           ({ key: k }) => k === key
         )?.value;
-        console.log(
-          !!externalID ? "🔗" : "⚠️",
-          key,
-          externalID || "ID not set"
-        );
+        externalID && console.log(key, externalID);
         if (!externalID) continue;
         const integrationData = await getIntegrationData({
           service: key,

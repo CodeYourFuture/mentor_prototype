@@ -14,7 +14,8 @@
     "integrations:run": "ts-node src/services/integrations/scripts/run.ts",
     "integrations:cron": "ts-node src/services/integrations/scripts/cron.ts",
     "export-to-sheets:run": "ts-node src/services/export-to-sheets/scripts/run.ts",
-    "export-to-sheets:cron": "ts-node src/services/export-to-sheets/scripts/cron.ts"
+    "export-to-sheets:cron": "ts-node src/services/export-to-sheets/scripts/cron.ts",
+    "deploy": "git push heroku main"
   },
   "dependencies": {
     "@slack/bolt": "^3.6.0",
