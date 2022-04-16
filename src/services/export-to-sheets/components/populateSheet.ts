@@ -2,7 +2,7 @@ require("dotenv").config();
 import { GoogleSpreadsheet } from "google-spreadsheet";
 import { sleep } from "../../../utils/methods";
 import { colours } from "../../../utils/styles";
-const THROTTLE = 500; // sheets
+const THROTTLE = 1000; // sheets
 
 function onlyUnique(value, index, self) {
   return self.indexOf(value) === index;
@@ -17,7 +17,7 @@ export default async ({ doc, data }: { doc: GoogleSpreadsheet; data: any }) => {
   await doc.loadInfo();
 
   // overview
-  console.log("Adding rows");
+  console.log("Format rows");
   const overview = doc.sheetsByIndex[0];
   let overviewHeaderValues = [];
   if (!data?.length) throw new Error("No data to export");
