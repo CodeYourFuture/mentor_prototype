@@ -31,8 +31,9 @@ export default async ({ doc, data }: { doc: GoogleSpreadsheet; data: any }) => {
     rowCount: data.length + 1,
     columnCount: overviewHeaderValues.length,
   });
+  const now = new Date().toDateString() + " " + new Date().getHours() + "00h";
   await overview.updateProperties({
-    title: `Overview (updated ${new Date().toISOString()})`,
+    title: `Overview (updated ${now})`,
   });
   await overview.setHeaderRow(overviewHeaderValues.filter(onlyUnique));
   for (const trainee of data) {
