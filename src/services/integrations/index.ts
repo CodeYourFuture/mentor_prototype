@@ -14,6 +14,7 @@ export type IntegrationResponse = {
 import database, { getSchema } from "../../clients/apollo";
 import getStudent from "../../queries/getStudent.graphql";
 import fs from "fs";
+import getTraineesInTeamGraphql from "../../queries/getTraineesInTeam.graphql";
 
 const throttle = 3000;
 const getAllMembers = async ({ client, channelID }) => {
@@ -84,21 +85,26 @@ async function getChannel({ client, channel }) {
   //
   // Fetch data for all members of channel (filter out volunteers)
   let cohortIntegrations = {};
-  const trainees = cohortList.filter(
-    (studentID) => !volunteerList.includes(studentID)
+
+  const traineesInTeam = await database.query({
+    query: getTraineesInTeamGraphql,
+    variables: { teamID: process.env.TEAM_ID },
+    fetchPolicy: "network-only",
+  });
+  const listOfTrainees = traineesInTeam.data.updates.map(
+    ({ student }) => student
   );
+
+  const trainees = cohortList.filter(
+    (studentID) =>
+      !volunteerList.includes(studentID) && listOfTrainees.includes(studentID)
+  );
+  console.log({ trainees });
   let i = 0;
   for (const studentID of trainees) {
     try {
       await sleep(throttle * i);
       i++;
-
-      const studentInfo = await database.query({
-        query: getStudent,
-        variables: { studentID },
-        fetchPolicy: "network-only",
-      });
-      if (!studentInfo.data.quick_ALL.aggregate.count) continue;
       const { profile } = await client.users.profile.get({
         user: studentID,
       });
