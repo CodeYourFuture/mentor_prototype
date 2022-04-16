@@ -1,27 +1,38 @@
-import { IntegrationResponse } from "../..";
+import { sleep } from "../../../../utils/methods";
 
-export default async function (config, id, group) {
-  const throttle = 1000;
-  const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+export const fetchData = async (config, id) => {
   let prs = {};
-  let i = 0;
+  const fetchConfig = { headers: { authorization: `token ${config.token}` } };
   for (const repo of config.repos) {
-    const endpoint = `https://api.github.com/search/issues?q=is:pr+repo:${config.org}/${repo}/+author:${id}`;
-    const headers = { authorization: `token ${config.token}` };
-    const response = await fetch(endpoint, { headers });
-    sleep(i++ * throttle);
-    const json = await response.json();
-    const hasPR = json.total_count > 0;
-    if (json) prs[`hasPR_${repo}`] = { value: hasPR };
+    try {
+      const endpoint = `https://api.github.com/search/issues?q=is:pr+repo:${config.org}/${repo}/+author:${id}`;
+      const response = await fetch(endpoint, fetchConfig);
+      const json = await response.json();
+      if (json) prs[`${repo}`] = { value: json.total_count > 0 };
+    } catch (e) {
+      console.error(e);
+    }
+    await sleep();
   }
-  const totalPRs = Object.values(prs).filter((pr) => (pr as any).value).length;
-  const totalObj = { value: totalPRs, favourite: true, sentiment: "neutral" };
-  const github = { "Total PRs": totalObj, ...prs };
-  if (group?.length) {
-    const maxPRs = group?.filter((t) => t["Total PRs"].value).length;
-    if (totalPRs >= maxPRs - 1) github["Total PRs"].sentiment = "positive";
-    else if (totalPRs >= maxPRs - 3) github["Total PRs"].sentiment = "caution";
-    else github["Total PRs"].sentiment = "negative";
-  }
-  return github as IntegrationResponse;
-}
+  return prs;
+};
+
+export const processData = (fetchedData, others) => {
+  const getTotalPRs = (data) =>
+    Object.values(data).filter((pr) => (pr as any).value).length;
+  console.log(getTotalPRs(fetchedData));
+  const myPRs = getTotalPRs(fetchedData);
+  const maxPRs = Math.max(...[fetchedData, others]?.map(getTotalPRs));
+  const PRsBehind = maxPRs - myPRs;
+  const sentiment = !PRsBehind
+    ? "positive"
+    : PRsBehind > 2
+    ? "caution"
+    : PRsBehind > 3
+    ? "negative"
+    : "neutral";
+  return {
+    "Total PRs": { value: myPRs, favourite: true, sentiment },
+    ...fetchedData,
+  };
+};

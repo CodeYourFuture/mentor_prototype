@@ -2,17 +2,17 @@ require("dotenv").config();
 import slack, { getSlackChannels, accessChannelID } from "../../clients/slack";
 import { getSchema } from "../../clients/apollo";
 import { json2csvAsync } from "json-2-csv";
-import updateGroup from "./utils/updatePermissions";
+import updateGroup from "./components/updatePermissions";
 import driveClient, { getChannelSheet } from "../../clients/sheets";
-import getAllMessagesInChannel from "./utils/getAllMessagesInChannel";
-import getAllUsersInChannel from "./utils/getAllUsersInChannel";
-import getTrainee from "./utils/getTrainee";
+import getAllMessagesInChannel from "./components/getAllMessagesInChannel";
+import getAllUsersInChannel from "./components/getAllUsersInChannel";
+import getTrainee from "./components/getTrainee";
 import { GoogleSpreadsheet } from "google-spreadsheet";
-import populateSheet from "./utils/populateSheet";
+import populateSheet from "./components/populateSheet";
+import { sleep } from "../../utils/methods";
 
 // If we pay for hasura this delay should go away
 const throttle = 4000;
-const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
 // Get a single channel
 async function getChannelData({ client, channel }) {
@@ -22,7 +22,7 @@ async function getChannelData({ client, channel }) {
     const cohortList = await getAllUsersInChannel({ client, channelID });
     const mentorList = await getAllUsersInChannel({
       client,
-      channelID: accessChannelID(),
+      channelID: await accessChannelID(),
     });
     const allMessages = await getAllMessagesInChannel({ client, channelID });
     const cohort = (

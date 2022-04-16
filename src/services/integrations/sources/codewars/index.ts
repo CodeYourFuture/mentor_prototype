@@ -1,10 +1,7 @@
 import { IntegrationResponse } from "../..";
 
 // An integration is a FUNCTION which runs PER TRAINEE
-export default async function (
-  id: string, // The trainee's ID for this integration service
-  group?: IntegrationResponse[] // Data of other trainees (for comparison)
-): Promise<IntegrationResponse> {
+export const fetchData = function (config, id) {
   //
   // /** Codewars has a public API; docs here:
   //  * https://dev.codewars.com/#introduction
@@ -92,4 +89,5 @@ export default async function (
   //   }
   // }
   return;
-}
+};
+export const processData = function (fetchedData: string, others) {};
