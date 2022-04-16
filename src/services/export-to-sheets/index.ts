@@ -1,103 +1,65 @@
 require("dotenv").config();
-import slack, { getSlackChannels, accessChannelID } from "../../clients/slack";
+import slack, {
+  getSlackChannels,
+  getMessagesInChannel,
+} from "../../clients/slack";
 import { getSchema } from "../../clients/apollo";
-import { json2csvAsync } from "json-2-csv";
 import updateGroup from "./components/updatePermissions";
-import driveClient, { getChannelSheet } from "../../clients/sheets";
-import getAllMessagesInChannel from "./components/getAllMessagesInChannel";
-import getAllUsersInChannel from "./components/getAllUsersInChannel";
+import driveClient from "../../clients/sheets";
 import getTrainee from "./components/getTrainee";
 import { GoogleSpreadsheet } from "google-spreadsheet";
 import populateSheet from "./components/populateSheet";
 import { sleep } from "../../utils/methods";
+import getTraineesInChannel from "../../utils/traineesInChannel";
 
-// If we pay for hasura this delay should go away
-const throttle = 4000;
-
-// Get a single channel
-async function getChannelData({ client, channel }) {
-  try {
-    const channelID = channel.id;
-    const schema = await getSchema();
-    const cohortList = await getAllUsersInChannel({ client, channelID });
-    const mentorList = await getAllUsersInChannel({
-      client,
-      channelID: await accessChannelID(),
-    });
-    const allMessages = await getAllMessagesInChannel({ client, channelID });
-    const cohort = (
-      await Promise.all(
-        cohortList
-          .filter((studentID) => !mentorList.includes(studentID))
-          .map(async (studentID, i) => {
-            await sleep(throttle * i);
-            return await getTrainee({ studentID, client, allMessages, schema });
-          })
-      )
-    ).filter(Boolean) as any;
-    return cohort;
-    // return await json2csvAsync(cohort, { emptyFieldValue: "" });
-  } catch (e) {
-    console.error(e);
-  }
-}
-// Get all channels
+// For each channel
 export default async () => {
-  // return await adminapi();
   const drive = await driveClient();
-
   const bot = await slack.client.auth.test();
-  for (const channel of await getSlackChannels({ userID: bot.user_id })) {
+  const channels = await getSlackChannels({ userID: bot.user_id });
+  const schema = await getSchema();
+  for (const channel of channels) {
     console.log("\n🚚", channel.name);
-    const csv = await getChannelData({ client: slack.client, channel });
-    const mimeType = "application/vnd.google-apps.spreadsheet";
-    // const file = await getChannelSheet({
-    //   client: drive,
-    //   channelID: channel.id,
-    // });
-    const requestBody = {
-      name: `${channel.name} (updated ${new Date().toISOString()})`,
-      mimeType,
-    };
-    const media = { mimeType: "text/csv", body: "" };
-    const fields = "id, webViewLink, webContentLink";
-    const permissionBody = {
-      role: "reader",
-      type: "user",
-      emailAddress: "mentor@dom.vin",
-    };
-    await updateGroup({ slack: slack.client });
-    // if (!file) {
+    const trainees = await getTraineesInChannel({ channelID: channel.id });
+    const allMessages = await getMessagesInChannel({ channelID: channel.id });
+
+    // create new sheet
     const newFile = await drive.files.create({
-      requestBody,
-      media,
-      fields,
+      requestBody: {
+        name: `${channel.name} (updated ${new Date().toISOString()})`,
+        mimeType: "application/vnd.google-apps.spreadsheet",
+      },
+      media: { mimeType: "text/csv", body: "" },
+      fields: "id, webViewLink, webContentLink",
     });
+    const doc = new GoogleSpreadsheet(newFile.data.id);
+
+    // Add trainees to sheet
+    let data = [];
+    for (const studentID of trainees) {
+      const trainee = await getTrainee({
+        studentID,
+        allMessages,
+        schema,
+      });
+      if (trainee) data.push(trainee);
+      await sleep(4000);
+    }
+    await populateSheet({ doc, data });
+
+    // set permissions
+    await updateGroup();
     await drive.permissions.create({
-      requestBody: permissionBody,
+      requestBody: {
+        role: "reader",
+        type: "user",
+        emailAddress: process.env.GOOGLE_DRIVE_GROUP_EMAIL,
+      },
       fileId: newFile.data.id,
       fields: "id",
     });
-    const doc = new GoogleSpreadsheet(newFile.data.id);
-    await populateSheet({ doc, data: csv });
-    console.log(
-      `👉 ${newFile.data.webViewLink.replace("/edit", "/template/preview")}`
-    );
-    // } else {
-    //   await drive.files.update({
-    //     fileId: file.id,
-    //     requestBody,
-    //     media,
-    //     fields,
-    //   });
-    //   await drive.permissions.update({
-    //     requestBody: permissionBody,
-    //     fileId: file.id,
-    //     fields: "id",
-    //   });
-    //   console.log(
-    //     `👆 ${file.webViewLink.replace("/edit", "/template/preview")}`
-    //   );
-    // }
+    const url = newFile.data.webViewLink.replace("/edit", "/template/preview");
+    console.log(`👉 ${url}`);
   }
+  console.log("✨ Export complete");
 };

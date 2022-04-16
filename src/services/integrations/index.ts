@@ -200,6 +200,7 @@ async function getChannel({ client, channel }) {
       return {};
     }
   }
+  console.log("✨ Integrations Processed");
 }
 
 export const integrations = async () => {

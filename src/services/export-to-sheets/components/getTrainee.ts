@@ -1,5 +1,6 @@
 require("dotenv").config();
 import database from "../../../clients/apollo";
+import slack from "../../../clients/slack";
 import getStudent from "../../../queries/getStudent.graphql";
 import parseIntegration from "./parseIntegrationData";
 
@@ -11,10 +12,10 @@ function getNumberOfDays(start) {
   return Math.round(diffInTime / oneDay);
 }
 
-export default async ({ studentID, client, allMessages, schema }) => {
+export default async ({ studentID, allMessages, schema }) => {
   if (!studentID) return null;
   try {
-    const { profile } = await client.users.profile.get({
+    const { profile } = await slack.client.users.profile.get({
       user: studentID,
     });
     const { data } = await database.query({
@@ -34,7 +35,7 @@ export default async ({ studentID, client, allMessages, schema }) => {
     for (const [user] of Object.entries(reporterCounts).sort((a, b) =>
       b[1] > a[1] ? 1 : -1
     )) {
-      const { profile } = await client.users.profile.get({ user });
+      const { profile } = await slack.client.users.profile.get({ user });
       const reporterName = profile.real_name;
       reporters.push(`${reporterName}`);
     }

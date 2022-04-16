@@ -20,7 +20,6 @@ export const fetchData = async (config, id) => {
 export const processData = (fetchedData, others) => {
   const getTotalPRs = (data) =>
     Object.values(data).filter((pr) => (pr as any).value).length;
-  console.log(getTotalPRs(fetchedData));
   const myPRs = getTotalPRs(fetchedData);
   const maxPRs = Math.max(...[fetchedData, others]?.map(getTotalPRs));
   const PRsBehind = maxPRs - myPRs;
