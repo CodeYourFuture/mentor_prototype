@@ -4,6 +4,7 @@ import mentionConfig from "./mentionConfig";
 import mentionData from "./mentionData";
 import mentionStudent from "./mentionStudent";
 import upsertIntegrationConfig from "../../../queries/upsertIntegrationConfig.graphql";
+import { accessChannelID } from "../../../clients/slack";
 
 // When the user sends a DM to CYFBot.
 
@@ -51,9 +52,8 @@ export default function (slack) {
         return;
       //
       // Ensure the user has permission
-      const accessChannelID = process.env.ACCESS_CHANNEL_ID;
       const { members: volunteerList } = await client.conversations.members({
-        channel: accessChannelID,
+        channel: await accessChannelID(),
       });
       const isReporterVolunteer = volunteerList.includes(reporterID);
       if (!isReporterVolunteer) {

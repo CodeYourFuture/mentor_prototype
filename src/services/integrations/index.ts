@@ -1,7 +1,7 @@
 require("dotenv").config();
 import upsertIntegration from "../../queries/upsertIntegration.graphql";
 import getIntegrationConfig from "../../queries/getIntegrationConfig.graphql";
-import slack from "../../clients/slack";
+import slack, { accessChannelID } from "../../clients/slack";
 
 export type IntegrationResponse = {
   [key: string]: {
@@ -74,8 +74,9 @@ async function getChannel({ client, channel }) {
       .join(", ")}`
   );
   const cohortList = await getAllMembers({ client, channelID });
+
   const { members: volunteerList } = await client.conversations.members({
-    channel: process.env.ACCESS_CHANNEL_ID,
+    channel: await accessChannelID(),
   });
 
   const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
@@ -94,7 +95,7 @@ async function getChannel({ client, channel }) {
       const { profile } = await client.users.profile.get({
         user: studentID,
       });
-      console.log("👤 User", profile.real_name);
+      console.log("👤 Get Integrations", profile.real_name);
 
       const { data } = await database.query({
         query: getStudent,
@@ -106,11 +107,10 @@ async function getChannel({ client, channel }) {
         const externalID = data.updates?.nodes?.find(
           ({ key: k }) => k === key
         )?.value;
+        console.log(!!externalID ? "🔗" : "⚠️", key, externalID);
         if (!externalID) {
-          console.log("No integrations");
           continue;
         }
-        console.log("🔗", key, externalID);
         const integrationData = await getIntegrationData({
           service: key,
           externalID,
@@ -134,7 +134,7 @@ async function getChannel({ client, channel }) {
       const { profile } = await client.users.profile.get({
         user: studentID,
       });
-      console.log("👤 Integrations", profile.real_name);
+      console.log("👤 Compare Integrations", profile.real_name);
       await sleep(throttle * i);
       i++;
       const { data } = await database.query({
@@ -182,9 +182,8 @@ export const integrations = async () => {
     user: auth.user_id,
     types: "public_channel,private_channel",
   });
-  console.log({ channels });
   for (const channel of channels.filter(
-    (channel) => channel.id !== process.env.ACCESS_CHANNEL_ID
+    (channel) => channel.name !== process.env.ACCESS_CHANNEL_NAME
   )) {
     await getChannel({ client: slack.client, channel });
   }

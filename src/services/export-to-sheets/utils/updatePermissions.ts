@@ -1,4 +1,5 @@
 import { JwtClient } from "../../../clients/sheets";
+import { accessChannelID } from "../../../clients/slack";
 import getAllUsersInChannel from "./getAllUsersInChannel";
 require("dotenv").config();
 const { google } = require("googleapis");
@@ -6,7 +7,7 @@ const { google } = require("googleapis");
 export default async ({ slack }) => {
   const mentorList = await getAllUsersInChannel({
     client: slack,
-    channelID: process.env.ACCESS_CHANNEL_ID,
+    channelID: await accessChannelID(),
   });
   const mentorEmails = (
     (await Promise.all(

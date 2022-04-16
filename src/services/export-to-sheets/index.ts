@@ -1,5 +1,5 @@
 require("dotenv").config();
-import slack, { getSlackChannels } from "../../clients/slack";
+import slack, { getSlackChannels, accessChannelID } from "../../clients/slack";
 import { getSchema } from "../../clients/apollo";
 import { json2csvAsync } from "json-2-csv";
 import updateGroup from "./utils/updatePermissions";
@@ -22,7 +22,7 @@ async function getChannelData({ client, channel }) {
     const cohortList = await getAllUsersInChannel({ client, channelID });
     const mentorList = await getAllUsersInChannel({
       client,
-      channelID: process.env.ACCESS_CHANNEL_ID,
+      channelID: accessChannelID(),
     });
     const allMessages = await getAllMessagesInChannel({ client, channelID });
     const cohort = (

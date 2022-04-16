@@ -15,7 +15,19 @@ export const getSlackChannels = async ({ userID }) => {
   });
   return (
     channels.filter(
-      (channel) => channel.id !== process.env.ACCESS_CHANNEL_ID
+      (channel) => channel.name !== process.env.ACCESS_CHANNEL_NAME
     ) || []
   );
+};
+
+export const accessChannelID = async () => {
+  const bot = await slack.client.auth.test();
+  const { channels } = await slack.client.users.conversations({
+    user: `${bot.user_id}`,
+    types: "public_channel,private_channel",
+  });
+  const id = channels.find(
+    (channel) => process.env.ACCESS_CHANNEL_NAME === channel.name
+  ).id;
+  return id;
 };

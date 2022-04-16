@@ -22,7 +22,7 @@ yarn install
 
 ```
 # CYFBot Config
-ACCESS_CHANNEL_ID="Cxxxxxxxxxx"
+ACCESS_CHANNEL_NAME="general"
 
 # Slack API
 SLACK_SIGNING_SECRET="xxxxxxxxxxxxxxxxxxxxxxxx"
