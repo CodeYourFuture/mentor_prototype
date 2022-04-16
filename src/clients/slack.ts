@@ -28,6 +28,7 @@ export const accessChannelID = async () => {
   });
   const id = channels.find(
     (channel) => process.env.ACCESS_CHANNEL_NAME === channel.name
-  ).id;
+  )?.id;
+  if (!id) throw new Error("No access channel found");
   return id;
 };
