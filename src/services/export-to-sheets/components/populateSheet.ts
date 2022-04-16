@@ -31,7 +31,8 @@ export default async ({ doc, data }: { doc: GoogleSpreadsheet; data: any }) => {
     rowCount: data.length + 1,
     columnCount: overviewHeaderValues.length,
   });
-  const now = new Date().toDateString() + " " + new Date().getHours() + "00h";
+  const now =
+    new Date().toDateString() + " " + new Date().getUTCHours() + "00h GMT";
   await overview.updateProperties({
     title: `Overview (updated ${now})`,
   });
