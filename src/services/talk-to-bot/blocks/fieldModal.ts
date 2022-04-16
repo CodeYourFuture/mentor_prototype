@@ -7,15 +7,6 @@ export default ({
   channelID,
   data,
 }) => {
-  // console.log({
-  //   studentID,
-  //   timestamp,
-  //   schemaItem,
-  //   currentValue,
-  //   studentName,
-  //   channelID,
-  //   data,
-  // });
   return {
     title: {
       type: "plain_text",

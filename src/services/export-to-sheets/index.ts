@@ -11,7 +11,7 @@ import { GoogleSpreadsheet } from "google-spreadsheet";
 import populateSheet from "./utils/populateSheet";
 
 // If we pay for hasura this delay should go away
-const throttle = 2000;
+const throttle = 3000;
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
 // Get a single channel

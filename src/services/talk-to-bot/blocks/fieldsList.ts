@@ -1,6 +1,6 @@
 export default ({ studentName, studentID, timestamp, data, schema }: any) => {
   const values = data.updates?.nodes;
-  console.log(data.updates.nodes);
+  // console.log(data.updates.nodes);
   return [
     {
       type: "header",

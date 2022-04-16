@@ -105,7 +105,7 @@ export default function (slack) {
       const isMentionedVolunteer = volunteerList.includes(studentID);
       if (isMentionedVolunteer) {
         const { profile } = await client.users.profile.get({ user: studentID });
-        console.log({ message });
+        // console.log({ message });
         client.reactions.add({
           channel: message.channel,
           timestamp: message.ts,
