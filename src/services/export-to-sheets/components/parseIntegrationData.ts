@@ -15,7 +15,7 @@ export default async ({ team, student, key }) => {
       try {
         const json = JSON.parse(value);
         const columns = Object.entries(json).map(([column, value]: any) => {
-          return { column: `${key}_${column}`, value: value };
+          return { column: `${column} (${key})`, value: value };
         });
         return columns;
       } catch (e) {

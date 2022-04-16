@@ -77,10 +77,11 @@ export default async ({ studentID, allMessages, schema }) => {
       ].flat() as any
     ).reduce((acc, { column, value }) => ({ ...acc, [column]: value }), {});
     console.log("👤", profile.real_name);
-    const percentOver =
+    const percentOver = Math.round(
       (data.quick_OVERACHIEVING.aggregate.count /
         data.quick_ALL.aggregate.count) *
-      100;
+        100
+    );
     return {
       Trainee: { value: profile.real_name },
       Mentors: { value: reporters.join(", ") },
@@ -107,7 +108,6 @@ export default async ({ studentID, allMessages, schema }) => {
         value: allMessages.filter((m) => m.user === studentID).length,
       },
       ...schemaFields,
-      "Mentorship ID": { value: studentID },
     };
   } catch (e) {
     console.error(e);

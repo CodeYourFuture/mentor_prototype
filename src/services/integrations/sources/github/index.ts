@@ -21,15 +21,16 @@ export const processData = (fetchedData, others) => {
   const getTotalPRs = (data) =>
     Object.values(data).filter((pr) => (pr as any).value).length;
   const myPRs = getTotalPRs(fetchedData);
-  const maxPRs = Math.max(...[fetchedData, others]?.map(getTotalPRs));
+  const maxPRs = Math.max(...[fetchedData, ...others]?.map(getTotalPRs));
   const PRsBehind = maxPRs - myPRs;
-  const sentiment = !PRsBehind
-    ? "positive"
-    : PRsBehind > 2
-    ? "caution"
-    : PRsBehind > 3
-    ? "negative"
-    : "neutral";
+  const sentiment =
+    PRsBehind <= 1
+      ? "positive"
+      : PRsBehind > 2
+      ? "caution"
+      : PRsBehind > 3
+      ? "negative"
+      : "neutral";
   return {
     "Total PRs": { value: myPRs, favourite: true, sentiment },
     ...fetchedData,
