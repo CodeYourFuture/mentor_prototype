@@ -21,7 +21,11 @@ export const getChannelSheet = async ({ client, channelID }) => {
   try {
     const { channel } = await client.conversations.info({ channel: channelID });
     const drive = await driveClient();
-    const files = await drive.files.list({ q: `name='${channel.name}'` });
+    const files = await drive.files.list({
+      q: `name='${channel.name}'`,
+      orderBy: "createdTime desc",
+      pageSize: 1,
+    });
     // console.log({ files });
     const file = files.data.files[0];
     return file;
