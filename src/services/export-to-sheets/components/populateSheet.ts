@@ -17,6 +17,7 @@ export default async ({ doc, data }: { doc: GoogleSpreadsheet; data: any }) => {
   await doc.loadInfo();
 
   // overview
+  console.log("Adding rows");
   const overview = doc.sheetsByIndex[0];
   let overviewHeaderValues = [];
   if (!data?.length) throw new Error("No data to export");
@@ -42,6 +43,7 @@ export default async ({ doc, data }: { doc: GoogleSpreadsheet; data: any }) => {
   }
 
   // apply styling
+  console.log("Apply styling");
   await overview.loadCells();
   data.forEach((_, y) => {
     overviewHeaderValues.forEach((_, x) => {
@@ -57,6 +59,7 @@ export default async ({ doc, data }: { doc: GoogleSpreadsheet; data: any }) => {
   await overview.saveUpdatedCells();
 
   // integrations
+  console.log("Parse integrations");
   const integrations = data
     .map((trainee) => {
       return Object.values(trainee).map(({ integration }: any) => integration);
