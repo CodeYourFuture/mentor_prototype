@@ -68,6 +68,11 @@ async function getChannel({ client, channel }) {
   await client.conversations.history({ channel: channelID, limit: 1 });
   const schema = await getSchema();
   const integrationFields = schema.filter(({ integration }) => !!integration);
+  console.log(
+    `🔗 Enabled integrations: ${integrationFields
+      .map(({ key }) => key)
+      .join(", ")}`
+  );
   const cohortList = await getAllMembers({ client, channelID });
   const { members: volunteerList } = await client.conversations.members({
     channel: process.env.ACCESS_CHANNEL_ID,
@@ -101,7 +106,10 @@ async function getChannel({ client, channel }) {
         const externalID = data.updates?.nodes?.find(
           ({ key: k }) => k === key
         )?.value;
-        if (!externalID) continue;
+        if (!externalID) {
+          console.log("No integrations");
+          continue;
+        }
         console.log("🔗", key, externalID);
         const integrationData = await getIntegrationData({
           service: key,
