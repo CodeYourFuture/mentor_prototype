@@ -27,7 +27,7 @@ export default async ({
             text: !file?.id ? "⚠️" : "🔍",
             emoji: true,
           },
-          url: `https://drive.google.com/file/u/0/d/${file?.id}/template/preview`,
+          url: `https://drive.google.com/spreadsheets/d/${file?.id}/template/preview`,
         },
       };
     })
