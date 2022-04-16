@@ -22,6 +22,7 @@ export default async ({ studentID, client, allMessages, schema }) => {
       variables: { studentID },
       fetchPolicy: "network-only",
     });
+    if (!data.quick_ALL.aggregate.count) return null;
     const reporterCounts = data.reporters.nodes.reduce(
       (acc, { reporter }) => ({
         ...acc,

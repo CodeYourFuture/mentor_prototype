@@ -92,6 +92,13 @@ async function getChannel({ client, channel }) {
     try {
       await sleep(throttle * i);
       i++;
+
+      const studentInfo = await database.query({
+        query: getStudent,
+        variables: { studentID },
+        fetchPolicy: "network-only",
+      });
+      if (!studentInfo.data.quick_ALL.aggregate.count) continue;
       const { profile } = await client.users.profile.get({
         user: studentID,
       });
@@ -107,7 +114,11 @@ async function getChannel({ client, channel }) {
         const externalID = data.updates?.nodes?.find(
           ({ key: k }) => k === key
         )?.value;
-        console.log(!!externalID ? "🔗" : "⚠️", key, externalID);
+        console.log(
+          !!externalID ? "🔗" : "⚠️",
+          key,
+          externalID || "ID not set"
+        );
         if (!externalID) {
           continue;
         }
