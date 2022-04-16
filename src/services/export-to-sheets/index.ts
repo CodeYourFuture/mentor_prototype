@@ -19,7 +19,7 @@ export default async () => {
   const channels = await getSlackChannels({ userID: bot.user_id });
   const schema = await getSchema();
   for (const channel of channels) {
-    console.log("\n🚚", channel.name);
+    console.log("🚚", channel.name);
     const trainees = await getTraineesInChannel({ channelID: channel.id });
     const allMessages = await getMessagesInChannel({ channelID: channel.id });
 
