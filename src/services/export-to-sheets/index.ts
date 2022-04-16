@@ -53,7 +53,7 @@ export default async () => {
       requestBody: {
         role: "reader",
         type: "user",
-        emailAddress: process.env.GOOGLE_DRIVE_GROUP_EMAIL,
+        emailAddress: process.env.SHEETS_ACCESS_GROUP_EMAIL,
       },
       fileId: newFile.data.id,
       fields: "id",
