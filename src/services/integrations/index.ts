@@ -170,10 +170,9 @@ async function getChannel({ client, channel }) {
 
 export const integrations = async () => {
   const auth = await slack.client.auth.test();
-
-  console.log({ auth });
   const { channels } = await slack.client.users.conversations({
     user: auth.user_id,
+    types: "public_channel,private_channel",
   });
   console.log({ channels });
   for (const channel of channels.filter(
