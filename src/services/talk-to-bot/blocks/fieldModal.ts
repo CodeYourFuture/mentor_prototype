@@ -19,7 +19,7 @@ export default ({
   return {
     title: {
       type: "plain_text",
-      text: `${studentName.slice(0, 24)}`,
+      text: `${schemaItem.label.slice(0, 24)}` || "Edit",
     },
     submit: {
       type: "plain_text",
