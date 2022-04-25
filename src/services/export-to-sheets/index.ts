@@ -63,5 +63,6 @@ export default async () => {
     const url = newFile.data.webViewLink.replace("/edit", "/template/preview");
     console.log(`👉 ${url}`);
   }
+
   console.log("✨ Export complete");
 };
