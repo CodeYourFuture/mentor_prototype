@@ -1,3 +1,5 @@
+// These display in both slack and browser
+
 export const colours = {
   positive: {
     red: 185 / 255,
@@ -24,3 +26,13 @@ export const colours = {
     alpha: 1,
   },
 };
+
+// utils
+
+export function onlyUnique(value, index, self) {
+  return self.indexOf(value) === index;
+}
+
+export function sleep(throttle = 1000) {
+  return new Promise((r) => setTimeout(r, throttle));
+}
