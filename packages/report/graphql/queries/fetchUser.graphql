@@ -1,0 +1,5 @@
+query fetchUser($userEmail: String!) {
+  users(where: { email: { _eq: $userEmail } }) {
+    is_user_admin
+  }
+}

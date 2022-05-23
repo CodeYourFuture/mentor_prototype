@@ -1,0 +1,23 @@
+query myOrgs($userId: uuid!) {
+  users_by_pk(id: $userId) {
+    id
+    name
+    orgs(order_by: { created_at: desc }) {
+      id
+      created_at
+      name
+      slug
+      description
+      main_image
+      geography
+      impacts(order_by: { priority: asc }, limit: 1) {
+        id
+        value
+        indicator
+        sdg
+        prefix
+        suffix
+      }
+    }
+  }
+}

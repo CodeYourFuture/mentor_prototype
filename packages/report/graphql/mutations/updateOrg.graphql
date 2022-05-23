@@ -1,0 +1,45 @@
+mutation updateOrg(
+  $id: uuid!
+  $name: String
+  $slug: String!
+  $description: String
+  $long_description: String
+  $main_image: String!
+  $geography: String
+  $size: String
+  $founded_at: String
+  $link_website: String
+  $link_annual_report: String
+  $link_financials: String
+) {
+  update_orgs_by_pk(
+    _set: {
+      name: $name
+      slug: $slug
+      description: $description
+      long_description: $long_description
+      main_image: $main_image
+      geography: $geography
+      size: $size
+      founded_at: $founded_at
+      link_website: $link_website
+      link_financials: $link_financials
+      link_annual_report: $link_annual_report
+    }
+    pk_columns: { id: $id }
+  ) {
+    id
+    created_at
+    name
+    slug
+    description
+    long_description
+    main_image
+    geography
+    size
+    founded_at
+    link_website
+    link_annual_report
+    link_financials
+  }
+}

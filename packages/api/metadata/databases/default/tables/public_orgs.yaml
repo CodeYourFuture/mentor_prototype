@@ -1,0 +1,116 @@
+table:
+  name: orgs
+  schema: public
+object_relationships:
+- name: author
+  using:
+    manual_configuration:
+      column_mapping:
+        author_id: id
+      insertion_order: null
+      remote_table:
+        name: users
+        schema: public
+array_relationships:
+- name: impacts
+  using:
+    foreign_key_constraint_on:
+      column: org
+      table:
+        name: impact
+        schema: public
+insert_permissions:
+- permission:
+    backend_only: false
+    check: {}
+    columns:
+    - author_id
+    - description
+    - founded_at
+    - geography
+    - link_annual_report
+    - link_financials
+    - link_website
+    - long_description
+    - main_image
+    - name
+    - size
+    - slug
+  role: user
+select_permissions:
+- permission:
+    allow_aggregations: true
+    columns:
+    - author_id
+    - created_at
+    - description
+    - founded_at
+    - geography
+    - id
+    - link_annual_report
+    - link_financials
+    - link_website
+    - long_description
+    - main_image
+    - name
+    - size
+    - slug
+    - updated_at
+    filter: {}
+  role: public
+- permission:
+    allow_aggregations: true
+    columns:
+    - author_id
+    - created_at
+    - description
+    - founded_at
+    - geography
+    - id
+    - link_annual_report
+    - link_financials
+    - link_website
+    - long_description
+    - main_image
+    - name
+    - size
+    - slug
+    - updated_at
+    filter: {}
+  role: user
+update_permissions:
+- permission:
+    check: null
+    columns:
+    - description
+    - founded_at
+    - geography
+    - link_annual_report
+    - link_financials
+    - link_website
+    - long_description
+    - main_image
+    - name
+    - size
+    - slug
+    filter:
+      _or:
+      - author_id:
+          _eq: X-Hasura-User-Id
+      - _exists:
+          _table:
+            name: users
+            schema: public
+          _where:
+            _and:
+            - id:
+                _eq: X-Hasura-User-Id
+            - is_user_admin:
+                _eq: true
+  role: user
+delete_permissions:
+- permission:
+    filter:
+      author_id:
+        _eq: X-Hasura-User-Id
+  role: user

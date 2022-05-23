@@ -1,0 +1,9 @@
+mutation UpdateImpactPriority($impactID: uuid!, $priority: Int!) {
+  update_impact_by_pk(
+    pk_columns: { id: $impactID }
+    _set: { priority: $priority }
+  ) {
+    id
+    priority
+  }
+}

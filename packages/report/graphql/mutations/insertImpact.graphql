@@ -1,0 +1,32 @@
+mutation insertImpact(
+  $indicator: String!
+  $value: numeric!
+  $sdg: String!
+  $org: uuid!
+  $prefix: String
+  $suffix: String
+  $context: String
+  $priority: Int
+) {
+  insert_impact_one(
+    object: {
+      indicator: $indicator
+      value: $value
+      sdg: $sdg
+      org: $org
+      prefix: $prefix
+      suffix: $suffix
+      context: $context
+      priority: $priority
+    }
+  ) {
+    id
+    indicator
+    value
+    sdg
+    prefix
+    suffix
+    context
+    priority
+  }
+}
