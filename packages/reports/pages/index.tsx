@@ -14,16 +14,15 @@ interface IProps {
 
 const IndexPage: NextPage<IProps> = ({ session }) => {
   const hasAccess = true;
-  console.log({ session });
   return hasAccess ? (
     <>
       <Head>
-        <title>Global Good Lab</title>
+        <title>Welcome to mentor</title>
       </Head>
-      <Home />
+      Welcome to mentor
     </>
   ) : (
-    <ClosedComponent />
+    <>closed</>
   );
 };
 
