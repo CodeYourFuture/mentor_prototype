@@ -1,6 +1,6 @@
 // An integration runs PER TRAINEE
 
-import { IntegrationResponse } from "../..";
+import { IntegrationResponse } from "..";
 
 // Fetch and return data for a trainee from the external service
 

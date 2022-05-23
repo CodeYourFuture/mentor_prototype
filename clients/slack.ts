@@ -67,3 +67,24 @@ export const getMessagesInChannel = async ({ channelID }) => {
   await fetchSlice({ next_cursor: false });
   return allMessages;
 };
+
+// Trainees in channel
+// export default async ({ channelID }) => {
+//   const channelUserList = await getUsersInChannel({ channelID });
+//   const mentorList = await getUsersInChannel({
+//     channelID: await accessChannelID(),
+//   });
+//   const traineesInTeam = await database.query({
+//     query: getTraineesInTeamGraphql,
+//     variables: { teamID: process.env.TEAM_ID },
+//     fetchPolicy: "network-only",
+//   });
+//   const listOfTrainees = traineesInTeam.data.updates.map(
+//     ({ student }) => student
+//   );
+//   const trainees = channelUserList.filter(
+//     (studentID) =>
+//       !mentorList.includes(studentID) && listOfTrainees.includes(studentID)
+//   );
+//   return trainees;
+// };

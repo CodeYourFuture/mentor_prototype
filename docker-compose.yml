@@ -2,15 +2,15 @@ version: "3"
 
 services:
   backend:
-    container_name: nhb-backend
-    image: nhb-backend
+    container_name: mentor-api
+    image: mentor-api
     build:
-      context: ./backend
+      context: ./packages/api
     platform: linux/arm64
     depends_on:
       db:
         condition: service_healthy
-    env_file: ./backend/.env
+    env_file: ./packages/api/.env
     volumes:
       - ./backend/migrations:/hasura-migrations
       - ./backend/metadata:/hasura-metadata
