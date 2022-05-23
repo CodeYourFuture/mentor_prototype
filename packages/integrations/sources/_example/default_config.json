@@ -1,0 +1,7 @@
+{
+  "description_1": "This config file is provided by the user",
+  "description_2": "For e.g. API keys, customisations, feature toggles",
+  "description_3": "If no config is provided, default_config.json will be used",
+
+  "api_key": 1234
+}

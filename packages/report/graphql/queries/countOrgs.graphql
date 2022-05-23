@@ -1,7 +1,0 @@
-query countOrgs {
-  orgs_aggregate {
-    aggregate {
-      count
-    }
-  }
-}

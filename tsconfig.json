@@ -1,0 +1,21 @@
+{
+  "compilerOptions": {
+    "removeComments": true,
+    "sourceMap": true,
+    "target": "es5",
+    "lib": ["esnext", "dom"],
+    // "moduleResolution": "node",
+    "outDir": "build",
+    "esModuleInterop": true
+  },
+  "include": [
+    "src/**/*.ts",
+    "src/cron/cron.js",
+    "src/cron/compile.mjs",
+    "src/cron.mts",
+    "cron.ts",
+    "src/sheets.ts",
+    "src/data-export.ts"
+  ],
+  "exclude": ["node_modules", "**/*.spec.ts"]
+}
