@@ -23,7 +23,7 @@
     "export-to-sheets:cron": "ts-node src/services/export-to-sheets/scripts/cron.ts",
     "reset": "hasura metadata apply && hasura seed apply",
     "dev": "docker-compose up",
-    "data": "hasura console",
+    "data": "hasura console"
   },
   "dependencies": {
     "@slack/bolt": "^3.6.0",
