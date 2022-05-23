@@ -1,7 +1,7 @@
 version: "3"
 
 services:
-  backend:
+  api:
     container_name: mentor-api
     image: mentor-api
     build:
@@ -12,30 +12,30 @@ services:
         condition: service_healthy
     env_file: ./packages/api/.env
     volumes:
-      - ./backend/migrations:/hasura-migrations
-      - ./backend/metadata:/hasura-metadata
+      - ./packages/api/migrations:/hasura-migrations
+      - ./packages/api/metadata:/hasura-metadata
     ports:
       - "8080:8080"
 
   db:
-    container_name: nhb-db
+    container_name: mentor-db
     image: postgres:13.0-alpine
     ports:
       - "5432:5432"
     volumes:
       - db_data:/var/lib/postgresql/data
-    env_file: ./backend/.env
+    env_file: ./packages/api/.env
     healthcheck:
       test: ["CMD-SHELL", "pg_isready --dbname=database --username=user"]
       interval: 10s
       timeout: 5s
       retries: 5
 
-  frontend:
-    container_name: nhb-frontend
-    image: nhb-frontend
+  reports:
+    container_name: mentor-reports
+    image: mentor-reports
     build:
-      context: ./frontend
+      context: ./packages/reports
     ports:
       - "3000:3000"
     stdin_open: true
@@ -43,7 +43,7 @@ services:
       db:
         condition: service_healthy
     volumes:
-      - ./frontend:/usr/src/app
+      - ./packages/reports:/usr/src/app
       - /usr/src/app/node_modules
       - /usr/src/app/.next
 

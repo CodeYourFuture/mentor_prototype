@@ -1,7 +1,7 @@
 {
   "name": "reports",
   "license": "MIT",
-  "author": "nirmalya.email@gmail.com",
+  "author": "i@dom.vin",
   "scripts": {
     "build": "next build",
     "dev": "concurrently \"next dev\" \"yarn generate-graphql --watch\"",
@@ -10,7 +10,7 @@
     "start": "next start",
     "types": "tsc --watch",
     "docker:rebuild": "docker-compose up --build",
-    "docker:terminal": "docker exec -t -i nhb-frontend /bin/bash"
+    "docker:terminal": "docker exec -t -i mentor-reports /bin/bash"
   },
   "dependencies": {
     "@apollo/client": "^3.5.7",

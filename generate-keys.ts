@@ -6,7 +6,7 @@ async function generateKeys() {
   try {
     // Get the contents of the .env.example file
     const frontendEnvironmentVariables = fs.readFileSync(
-      "frontend/.env.example",
+      "packages/reports/.env.example",
       "utf8"
     );
 
@@ -36,7 +36,7 @@ async function generateKeys() {
     )}'`;
 
     // Write the contents into the .env file
-    fs.writeFileSync("frontend/.env", frontendEnv);
+    fs.writeFileSync("packages/reports/.env", frontendEnv);
 
     // Get the contents of the .env.example file
     const backendEnvironmentVariables = fs.readFileSync(
@@ -50,10 +50,10 @@ async function generateKeys() {
     )}'`;
 
     // Write the contents into the .env file
-    fs.writeFileSync("backend/.env", backendEnv);
+    fs.writeFileSync("packages/api/.env", backendEnv);
 
     console.log(
-      "Secret keys was generated in frontend/.env and backend/.env\n"
+      "Secret keys was generated in packages/reports/.env and packages/api/.env\n"
     );
   } catch (err) {
     console.error(err);
