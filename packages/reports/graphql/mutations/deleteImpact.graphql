@@ -1,0 +1,5 @@
+mutation deleteImpact($id: uuid!) {
+  delete_impact_by_pk(id: $id) {
+    id
+  }
+}

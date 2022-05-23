@@ -1,0 +1,7 @@
+mutation deleteOrg($id: uuid!) {
+  delete_orgs_by_pk(id: $id) {
+    id
+    created_at
+    name
+  }
+}

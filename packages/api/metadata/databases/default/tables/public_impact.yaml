@@ -1,0 +1,114 @@
+table:
+  name: impact
+  schema: public
+object_relationships:
+- name: orgByOrg
+  using:
+    foreign_key_constraint_on: org
+insert_permissions:
+- permission:
+    backend_only: false
+    check:
+      _or:
+      - orgByOrg:
+          author_id:
+            _eq: X-Hasura-User-Id
+      - _exists:
+          _table:
+            name: users
+            schema: public
+          _where:
+            _and:
+            - id:
+                _eq: X-Hasura-User-Id
+            - is_user_admin:
+                _eq: true
+    columns:
+    - context
+    - image
+    - indicator
+    - org
+    - prefix
+    - priority
+    - sdg
+    - suffix
+    - value
+  role: user
+select_permissions:
+- permission:
+    columns:
+    - context
+    - id
+    - image
+    - indicator
+    - org
+    - prefix
+    - priority
+    - sdg
+    - suffix
+    - value
+    filter: {}
+  role: public
+- permission:
+    columns:
+    - context
+    - id
+    - image
+    - indicator
+    - org
+    - prefix
+    - priority
+    - sdg
+    - suffix
+    - value
+    filter: {}
+  role: user
+update_permissions:
+- permission:
+    check:
+      _or:
+      - orgByOrg:
+          author_id:
+            _eq: X-Hasura-User-Id
+      - _exists:
+          _table:
+            name: users
+            schema: public
+          _where:
+            _and:
+            - id:
+                _eq: X-Hasura-User-Id
+            - is_user_admin:
+                _eq: true
+    columns:
+    - context
+    - image
+    - indicator
+    - prefix
+    - priority
+    - sdg
+    - suffix
+    - value
+    filter:
+      _or:
+      - orgByOrg:
+          author_id:
+            _eq: X-Hasura-User-Id
+      - _exists:
+          _table:
+            name: users
+            schema: public
+          _where:
+            _and:
+            - id:
+                _eq: X-Hasura-User-Id
+            - is_user_admin:
+                _eq: true
+  role: user
+delete_permissions:
+- permission:
+    filter:
+      orgByOrg:
+        author_id:
+          _eq: X-Hasura-User-Id
+  role: user

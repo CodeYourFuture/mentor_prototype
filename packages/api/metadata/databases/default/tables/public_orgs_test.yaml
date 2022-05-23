@@ -1,0 +1,3 @@
+table:
+  name: orgs_test
+  schema: public

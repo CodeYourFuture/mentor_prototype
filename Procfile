@@ -1,3 +1,2 @@
-
-cron: node build/services/cron.js
-talk-to-bot: node build/services/talk-to-bot/index.js
+integrations: node build/packages/integrations/index.js
+chatbot: node build/services/chatbot/index.js
