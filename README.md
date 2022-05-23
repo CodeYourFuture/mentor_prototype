@@ -1,58 +1,50 @@
-# Mentor
+# Mentor (for Slack)
 
-A platform for tracking trainee data.
+<img width="1138" alt="image" src="https://user-images.githubusercontent.com/1271197/169831301-bd14075c-09dd-416c-beaa-2ffa12a4fc51.png">
 
-## Dev Quickstart
+## Quickstart
 
-Message Dom Vinyard on CYF Slack and I can help you get set up with env variables etc.
+.env
 
-1. Clone the repository:
+---
 
-```bash
-git clone git@github.com:DomVinyard/TeacherBot.git
-```
+## Microservices
 
-2. Install dependencies:
+Mentor is composed of four packages.
 
-```bash
-yarn install
-```
+### packages/report
 
-3. Add .env file:
+A NextJS static site. Generates three reports.
 
-```
-# CYFBot Config
-ACCESS_CHANNEL_NAME="general"
+1. Per-trainee report
+2. Per-cohort report
+3. Per-organisation report
 
-# Slack API
-SLACK_SIGNING_SECRET="xxxxxxxxxxxxxxxxxxxxxxxx"
-SLACK_BOT_TOKEN="xoxb-xxxxxx-xxxxxx-xxxxxxxxxxxx"
-SLACK_APP_TOKEN="xapp-1-xxxxxx-xxxxxx-xxxxxxxxxxxxxxxxxxxxxxxx"
-SLACK_USER_TOKEN="xoxp-xxxxxx-xxxxxx-xxxxxx-xxxxxxxxxxxx"
+Also generates a log of all mentor updates and the ability to download this feed as csv. This is protected by login with slack
 
-# Hasura Database
-HASURA_URI="https://xxxxxx.hasura.app/v1/graphql"
-HASURA_ADMIN_SECRET="xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+### packages/chatbot
 
-# Google Sheets
-SHEETS_CLIENT_EMAIL="xxxxxx@xxxxxx.iam.gserviceaccount.com"
-SHEETS_PRIVATE_KEY="-----BEGIN PRIVATE KEY-----\nxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx=\n-----END PRIVATE KEY-----\n"
-```
+Long running process that's always listening. It uses the @slack/bolt library to interface with Slack.
 
-4. Run development server:
+When a mentor types a DM to the bot it:
+1. Interprets the message
+2. Requests information about a trainee
+3. Saves that information to the database
+4. Updates the report
 
-```bash
-yarn dev
-```
+Has a cron job running that posts an update to the admin channel once per week.
 
-## Talk-to-Bot
+### packages/integrations
 
-The talk-to-bot service allows mentors to update trainee information and review cohort progress.
+Runs on a cron, node worker.
 
-#### Update Trainee Information
+### packages/api
 
-Send a DM To CYFBot with the @trainee_name.
+hasura
 
-#### Review cohort progress
+---
 
-Send a DM To CYFBot with the #cohort_channel_name.
+## Deployment
+
+Each service has its own github action
+

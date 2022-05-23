@@ -1,4 +1,4 @@
-import addRecord from "../../../queries/addRecord.graphql";
+import addRecord from "../../api/queries/addRecord.graphql";
 import database from "../../../clients/apollo";
 import concernButtons from "../blocks/concernButtons";
 

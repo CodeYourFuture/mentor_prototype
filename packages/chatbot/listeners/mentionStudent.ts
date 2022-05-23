@@ -2,7 +2,7 @@ import fieldsList from "../blocks/fieldsList";
 import quickUpdateButtons from "../blocks/quickUpdateButtons";
 import traineeCohortList from "../blocks/traineeCohortList";
 import database, { getSchema } from "../../../clients/apollo";
-import getStudent from "../../../queries/getStudent.graphql";
+import getStudent from "../../api/queries/getStudent.graphql";
 
 // When the user @mention's a student
 // Show them the student home form
