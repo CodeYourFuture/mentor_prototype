@@ -1,10 +1,10 @@
-import database from "../../../cyfbot/CYFBot/src/clients/apollo";
+import database from "../../../clients/apollo";
 import mentionChannel from "./mentionChannel";
 import mentionConfig from "./mentionConfig";
 import mentionData from "./mentionData";
 import mentionStudent from "./mentionStudent";
-import upsertIntegrationConfig from "../../../cyfbot/CYFBot/src/queries/upsertIntegrationConfig.graphql";
-import { accessChannelID } from "../../../cyfbot/CYFBot/src/clients/slack";
+import upsertIntegrationConfig from "../../../packages/api/queries/upsertIntegrationConfig.graphql";
+import { accessChannelID } from "../../../clients/slack";
 
 // When the user sends a DM to CYFBot.
 

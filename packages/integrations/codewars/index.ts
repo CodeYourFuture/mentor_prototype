@@ -1,4 +1,4 @@
-import { IntegrationResponse } from "../..";
+// import { IntegrationResponse } from "../..";
 
 // An integration is a FUNCTION which runs PER TRAINEE
 export const fetchData = function (config, id) {

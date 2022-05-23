@@ -1,6 +1,6 @@
 import fieldModal from "../blocks/fieldModal";
 import schemaModal from "../blocks/schemaModal";
-import { getSchema } from "../../../cyfbot/CYFBot/src/clients/apollo";
+// import { getSchema } from "../../../cyfbot/CYFBot/src/clients/apollo";
 
 // When the user clicks a button to edit a value
 // open the modal to edit the value.

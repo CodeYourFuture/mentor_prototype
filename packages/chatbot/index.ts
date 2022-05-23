@@ -1,7 +1,7 @@
 // Talk to the bot
 
 require("dotenv").config();
-import slack from "../../cyfbot/CYFBot/src/clients/slack";
+import slack from "../../clients/slack";
 import listeners from "./listeners";
 (async () => {
   await slack.start(Number(process.env.PORT) || 5000);

@@ -1,4 +1,4 @@
-import { getChannelSheet } from "../../../cyfbot/CYFBot/src/clients/sheets";
+// import { getChannelSheet } from "../../../cyfbot/CYFBot/src/clients/sheets";
 
 export default async ({
   studentID,
@@ -13,7 +13,7 @@ export default async ({
   const channelBlocks = await Promise.all(
     channels.map(async ({ id, name }) => {
       const actionValue = JSON.stringify({ id, name, timestamp });
-      const file = await getChannelSheet({ client, channelID: id });
+      // const file = await getChannelSheet({ client, channelID: id });
       return {
         type: "section",
         text: {
@@ -24,10 +24,10 @@ export default async ({
           type: "button",
           text: {
             type: "plain_text",
-            text: !file?.id ? "⚠️" : "🔍",
+            // text: !file?.id ? "⚠️" : "🔍",
             emoji: true,
           },
-          url: `https://docs.google.com/spreadsheets/d/${file?.id}/template/preview`,
+          // url: `https://docs.google.com/spreadsheets/d/${file?.id}/template/preview`,
         },
       };
     })

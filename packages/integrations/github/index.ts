@@ -1,4 +1,4 @@
-import { sleep } from "../../../../utils/methods";
+import { sleep } from "../../../CONFIG";
 
 export const fetchData = async (config, id) => {
   let prs = {};

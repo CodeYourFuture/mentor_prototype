@@ -1,7 +1,7 @@
 require("dotenv").config();
-import upsertIntegration from "../../cyfbot/CYFBot/src/queries/upsertIntegration.graphql";
-import getIntegrationConfig from "../../cyfbot/CYFBot/src/queries/getIntegrationConfig.graphql";
-import slack, { accessChannelID } from "../../cyfbot/CYFBot/src/clients/slack";
+import upsertIntegration from "../../packages/api/queries/upsertIntegration.graphql";
+import getIntegrationConfig from "../../packages/api/queries/getIntegrationConfig.graphql";
+import slack, { accessChannelID } from "../../clients/slack";
 
 export type IntegrationResponse = {
   [key: string]: {
@@ -11,11 +11,11 @@ export type IntegrationResponse = {
   };
 };
 
-import database, { getSchema } from "../../cyfbot/CYFBot/src/clients/apollo";
-import getStudent from "../../cyfbot/CYFBot/src/queries/getStudent.graphql";
+import database, { getSchema } from "../../clients/apollo";
+import getStudent from "../../packages/api/queries/getStudent.graphql";
 import fs from "fs";
-import getTraineesInTeamGraphql from "../../cyfbot/CYFBot/src/queries/getTraineesInTeam.graphql";
-import { sleep } from "../../utils/methods";
+import getTraineesInTeamGraphql from "../../packages/api/queries/getTraineesInTeam.graphql";
+import { sleep } from "../../CONFIG";
 
 const THROTTLE = 2000;
 
