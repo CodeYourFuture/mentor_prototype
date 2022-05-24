@@ -4,6 +4,7 @@
 
 ## Quickstart
 
+Docker
 .env
 
 ---
@@ -27,6 +28,7 @@ Also generates a log of all mentor updates and the ability to download this feed
 Long running process that's always listening. It uses the @slack/bolt library to interface with Slack.
 
 When a mentor types a DM to the bot it:
+
 1. Interprets the message
 2. Requests information about a trainee
 3. Saves that information to the database
@@ -47,4 +49,3 @@ hasura
 ## Deployment
 
 Each service has its own github action
-
