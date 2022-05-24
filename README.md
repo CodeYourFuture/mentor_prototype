@@ -4,8 +4,8 @@
 
 ## Quickstart
 
-Docker
 .env
+Docker
 
 ---
 
