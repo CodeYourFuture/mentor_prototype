@@ -43,9 +43,9 @@ services:
       db:
         condition: service_healthy
     volumes:
-      - ./packages/reports:/usr/src/app
-      - /usr/src/app/node_modules
-      - /usr/src/app/.next
+      - ./packages/reports:/usr/packages/reports
+      - /usr/packages/reports/node_modules
+      - /usr/packages/reports/.next
 
 volumes:
   db_data:
