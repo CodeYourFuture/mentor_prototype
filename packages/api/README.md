@@ -1,1 +1,2 @@
-Some docs about hasura
+
+hosted on hasura
